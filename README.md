@@ -1,4 +1,4 @@
-!! MiniTopPlugin
+## MiniTopPlugin
 
 A Cloud Foundry cli plugin to show current activity about your VMs, Apps, App instances, and Routes.  
 It is an amateur version of the no longer maintained [Top plugin](https://github.com/ECSTeam/cloudfoundry-top-plugin).  
