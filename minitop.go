@@ -11,6 +11,7 @@ import (
 	"github.com/awesome-gocui/gocui"
 	"github.com/integrii/flaggy"
 	"github.com/metskem/rommel/MiniTopPlugin/apps"
+	"github.com/metskem/rommel/MiniTopPlugin/clients"
 	"github.com/metskem/rommel/MiniTopPlugin/common"
 	"github.com/metskem/rommel/MiniTopPlugin/conf"
 	"github.com/metskem/rommel/MiniTopPlugin/routes"
@@ -111,8 +112,6 @@ func startMT(cliConnection plugin.CliConnection) {
 	type metricOnIPs struct {
 		IPs map[string]bool
 	}
-	metricCounts := make(map[string]metricOnIPs)
-	highestCount := 0
 
 	go func() {
 		for {
@@ -195,26 +194,6 @@ func startMT(cliConnection plugin.CliConnection) {
 								metricValues.Tags = make(map[string]float64)
 								vms.CellMetricMap[key] = metricValues
 							}
-
-							for metricName, _ := range metrics {
-								if metricOnIP, found := metricCounts[metricName]; !found {
-									metricOnIP = metricOnIPs{IPs: make(map[string]bool)}
-									metricOnIP.IPs[key] = true
-									metricCounts[metricName] = metricOnIP
-								} else {
-									if _, found2 := metricOnIP.IPs[key]; !found2 {
-										metricOnIP.IPs[key] = true
-										metricCounts[metricName] = metricOnIP
-									}
-								}
-							}
-							for metricName, metricOnIP := range metricCounts {
-								if len(metricOnIP.IPs) > highestCount {
-									highestCount = len(metricOnIP.IPs)
-									util.WriteToFile(fmt.Sprintf("highestCount: %d, highestKey: %s", highestCount, metricName))
-								}
-							}
-
 							for _, metricName := range vms.MetricNames {
 								value := metrics[metricName].GetValue()
 								if value != 0 {
@@ -258,44 +237,64 @@ func startMT(cliConnection plugin.CliConnection) {
 				//
 				// type Timer metrics
 				if timer := envelope.GetTimer(); timer != nil && timer.Name == "http" {
-					if envelope.Tags[routes.TagUri] != "" {
-						if Url, err := url.Parse(envelope.Tags[routes.TagUri]); err == nil {
-							key = Url.Host
-							routeMetric, ok := routes.RouteMetricMap[key]
+					if envelope.Tags[common.TagUri] != "" {
+						if Url, err := url.Parse(envelope.Tags[common.TagUri]); err == nil {
+							routeKey := Url.Host
+							clientKey := strings.Split(envelope.Tags[common.TagRemoteAddress], ":")[0]
+							routeMetric, ok := routes.RouteMetricMap[routeKey]
 							if !ok {
-								routeMetric = routes.RouteMetric{Route: key}
+								routeMetric = routes.RouteMetric{Route: routeKey}
 							}
 							routeMetric.LastSeen = time.Now()
-							switch envelope.Tags[routes.TagStatusCode][:1] {
+							clientMetric, ok := clients.ClientMetricMap[clientKey]
+							if !ok {
+								clientMetric = clients.ClientMetric{IP: clientKey}
+							}
+							clientMetric.LastSeen = time.Now()
+							switch envelope.Tags[common.TagStatusCode][:1] {
 							case "2":
 								routeMetric.R2xx++
 								routes.Total2xx++
+								clientMetric.R2xx++
+								clients.Total2xx++
 							case "3":
 								routeMetric.R3xx++
 								routes.Total3xx++
+								clientMetric.R3xx++
+								clients.Total3xx++
 							case "4":
 								routeMetric.R4xx++
 								routes.Total4xx++
+								clientMetric.R4xx++
+								clients.Total4xx++
 							case "5":
 								routeMetric.R5xx++
 								routes.Total5xx++
+								clientMetric.R5xx++
+								clients.Total5xx++
 							}
-							switch envelope.Tags[routes.TagMethod] {
+							switch envelope.Tags[common.TagMethod] {
 							case "GET":
+
 								routeMetric.GETs++
+								clientMetric.GETs++
 							case "PUT":
 								routeMetric.PUTs++
+								clientMetric.PUTs++
 							case "POST":
 								routeMetric.POSTs++
+								clientMetric.POSTs++
 							case "DELETE":
 								routeMetric.DELETEs++
+								clientMetric.DELETEs++
 							}
 							routes.TotalReqs++
+							clients.TotalReqs++
 							routeMetric.RTotal++
+							clientMetric.RTotal++
 							routeMetric.TotalRespTime = routeMetric.TotalRespTime + float64(timer.Stop) - float64(timer.Start)
-							routes.RouteMetricMap[key] = routeMetric
-							//util.WriteToFile(fmt.Sprintf("%s: %s %d %d %d %d %d", envelope.Tags["job"], key, len(routes.RouteMetricMap), routes.RouteMetricMap[key].R2xx, routes.RouteMetricMap[key].R4xx, routes.RouteMetricMap[key].POSTs, routes.RouteMetricMap[key].TotalRespTime))
-							routes.RouteMetricMap[key] = routeMetric
+							routes.RouteMetricMap[routeKey] = routeMetric
+							clients.ClientMetricMap[clientKey] = clientMetric
 						}
 					}
 				}
@@ -378,13 +377,23 @@ func startCui() {
 					}
 					vms.ShowView(gui)
 				} else {
-					routes.SetKeyBindings(gui)
-					common.SetKeyBindings(gui)
-					if common.ViewToggled {
-						gui.SetManager(routes.NewRouteView())
-						common.ViewToggled = false
+					if common.ActiveView == common.RouteView {
+						routes.SetKeyBindings(gui)
+						common.SetKeyBindings(gui)
+						if common.ViewToggled {
+							gui.SetManager(routes.NewRouteView())
+							common.ViewToggled = false
+						}
+						routes.ShowView(gui)
+					} else {
+						clients.SetKeyBindings(gui)
+						common.SetKeyBindings(gui)
+						if common.ViewToggled {
+							gui.SetManager(clients.NewClientView())
+							common.ViewToggled = false
+						}
+						clients.ShowView(gui)
 					}
-					routes.ShowView(gui)
 				}
 			}
 			time.Sleep(time.Duration(conf.IntervalSecs) * time.Second)

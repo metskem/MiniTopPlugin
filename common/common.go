@@ -16,7 +16,6 @@ const (
 	FilterFieldAppName
 	FilterFieldOrg
 	FilterFieldSpace
-	FilterFieldHost
 	FilterFieldRoute
 )
 const (
@@ -24,8 +23,13 @@ const (
 	AppView
 	VMView
 	RouteView
-	colorReset   = "\u001B[0m"
-	colorReverse = "\u001B[34;7m"
+	ClientView
+	colorReset       = "\u001B[0m"
+	colorReverse     = "\u001B[34;7m"
+	TagStatusCode    = "status_code"
+	TagUri           = "uri"
+	TagMethod        = "method"
+	TagRemoteAddress = "remote_address"
 )
 
 var (
@@ -111,7 +115,7 @@ func SetShowToggleView(g *gocui.Gui, v *gocui.View) error {
 
 func ShowToggleViewLayout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
-	if _, err := g.SetView("ToggleView", maxX/2-5, maxY/2-3, maxX/2+28, maxY/2+2, byte(0)); err != nil &&
+	if _, err := g.SetView("ToggleView", maxX/2-5, maxY/2-3, maxX/2+28, maxY/2+3, byte(0)); err != nil &&
 		!errors.Is(err, gocui.ErrUnknownView) {
 		return err
 	} else {
@@ -124,7 +128,8 @@ func ShowToggleViewLayout(g *gocui.Gui) error {
 			lines[0] = []string{"", "VM View", ""}
 			lines[1] = []string{"", "Application View", ""}
 			lines[2] = []string{"", "Application Instance View", ""}
-			lines[3] = []string{"", "Route View (-r option required)", ""}
+			lines[3] = []string{"", "Route View (-r required)", ""}
+			lines[4] = []string{"", "Client View (-r required)", ""}
 
 			for i := 0; i < len(lines); i++ {
 				if i == currentTogglePosition {
@@ -161,7 +166,7 @@ func arrowDown(g *gocui.Gui, v *gocui.View) error {
 func arrowUp(g *gocui.Gui, v *gocui.View) error {
 	_ = g // get rid of compiler warning
 	_ = v // get rid of compiler warning
-	if currentTogglePosition < 3 {
+	if currentTogglePosition < 4 {
 		currentTogglePosition += 1
 	}
 	util.WriteToFileDebug(fmt.Sprintf("Toggle arrowUp, currentTogglePosition=%d", currentTogglePosition))
@@ -188,6 +193,10 @@ func enterToggle(g *gocui.Gui, v *gocui.View) error {
 	case 3:
 		_, _ = g.SetCurrentView("RouteView")
 		ActiveView = RouteView
+		ViewToggled = true
+	case 4:
+		_, _ = g.SetCurrentView("ClientView")
+		ActiveView = ClientView
 		ViewToggled = true
 	}
 
