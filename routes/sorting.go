@@ -13,6 +13,7 @@ const (
 	sortByLastSeen = iota
 	sortByRoute
 	sortByRTot
+	sortByRTotRate
 	sortByResp
 	sortByR2xx
 	sortByR3xx
@@ -28,6 +29,7 @@ var (
 	activeSortField SortField = sortByRoute
 	routeColor                = common.ColorWhite
 	rTotColor                 = common.ColorWhite
+	rTotRateColor             = common.ColorWhite
 	respColor                 = common.ColorWhite
 	r2xxColor                 = common.ColorWhite
 	r3xxColor                 = common.ColorWhite
@@ -73,6 +75,8 @@ func (p PairList) Less(i, j int) bool {
 		return p[i].Value.Route < p[j].Value.Route
 	case sortByRTot:
 		return p[i].Value.RTotal < p[j].Value.RTotal
+	case sortByRTotRate:
+		return p[i].Value.RTotRate < p[j].Value.RTotRate
 	case sortByResp:
 		return p[i].Value.TotalRespTime/p[i].Value.RTotal < p[j].Value.TotalRespTime/p[j].Value.RTotal
 	case sortByR2xx:
@@ -109,6 +113,7 @@ func colorSortedColumn() {
 	common.LastSeenColor = common.ColorWhite
 	routeColor = common.ColorWhite
 	rTotColor = common.ColorWhite
+	rTotRateColor = common.ColorWhite
 	respColor = common.ColorWhite
 	r2xxColor = common.ColorWhite
 	r3xxColor = common.ColorWhite
@@ -125,6 +130,8 @@ func colorSortedColumn() {
 		routeColor = common.ColorBlue
 	case sortByRTot:
 		rTotColor = common.ColorBlue
+	case sortByRTotRate:
+		rTotRateColor = common.ColorBlue
 	case sortByResp:
 		respColor = common.ColorBlue
 	case sortByR2xx:
