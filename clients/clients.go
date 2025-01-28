@@ -14,6 +14,7 @@ type ClientMetric struct {
 	LastSeen time.Time
 	IP       string
 	RTotal   float64
+	RTotRate float64
 	R2xx     float64
 	R3xx     float64
 	R4xx     float64
@@ -25,14 +26,15 @@ type ClientMetric struct {
 }
 
 var (
-	mainView        *gocui.View
-	summaryView     *gocui.View
-	ClientMetricMap = make(map[string]ClientMetric) // map key is app-guid
-	Total2xx        float64
-	Total3xx        float64
-	Total4xx        float64
-	Total5xx        float64
-	TotalReqs       float64
+	mainView                *gocui.View
+	summaryView             *gocui.View
+	ClientMetricMap         = make(map[string]ClientMetric) // map key is app-guid
+	ClientMetricMapPrevious = make(map[string]ClientMetric) // map key is app-guid
+	Total2xx                float64
+	Total3xx                float64
+	Total4xx                float64
+	Total5xx                float64
+	TotalReqs               float64
 )
 
 type ClientView struct {
@@ -166,14 +168,20 @@ func refreshViewContent(gui *gocui.Gui) {
 		defer common.MapLock.Unlock()
 		lineCounter := 0
 		mainView.Title = "Clients"
-		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %-60s %7s %5s %5s %5s %5s %5s %5s %5s %7s  %s\n", common.ColorYellow,
-			"LASTSEEN", "Client", "Req Tot", "2xx", "3xx", "4xx", "5xx", "GETs", "PUTs", "POSTs", "DELETEs", common.ColorReset))
+		// calculate the rates per second by subtracting the previous values
+		for k, v := range ClientMetricMap {
+			v.RTotRate = v.RTotal - ClientMetricMapPrevious[k].RTotal
+			ClientMetricMap[k] = v
+		}
+		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %-60s %7s %5s %5s %5s %5s %5s %5s %5s %5s %7s  %s\n", common.ColorYellow,
+			"LASTSEEN", "Client", "Req Tot", "Req/s", "2xx", "3xx", "4xx", "5xx", "GETs", "PUTs", "POSTs", "DELETEs", common.ColorReset))
 		for _, pairlist := range sortedBy(ClientMetricMap, common.ActiveSortDirection, activeSortField) {
 			if passFilter(pairlist) {
-				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
+				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
 					common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
 					IPColor, util.TruncateString(pairlist.Value.IP, 60), common.ColorReset,
 					rTotColor, util.GetFormattedUnit(pairlist.Value.RTotal), common.ColorReset,
+					rTotRateColor, util.GetFormattedUnit(pairlist.Value.RTotRate), common.ColorReset,
 					r2xxColor, util.GetFormattedUnit(pairlist.Value.R2xx), common.ColorReset,
 					r3xxColor, util.GetFormattedUnit(pairlist.Value.R3xx), common.ColorReset,
 					r4xxColor, util.GetFormattedUnit(pairlist.Value.R4xx), common.ColorReset,
@@ -189,6 +197,9 @@ func refreshViewContent(gui *gocui.Gui) {
 					break
 				}
 			}
+		}
+		for k, v := range ClientMetricMap {
+			ClientMetricMapPrevious[k] = v
 		}
 	}
 }

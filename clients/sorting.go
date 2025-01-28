@@ -13,6 +13,7 @@ const (
 	sortByLastSeen = iota
 	sortByIP
 	sortByRTot
+	sortByRTotRate
 	sortByR2xx
 	sortByR3xx
 	sortByR4xx
@@ -27,6 +28,7 @@ var (
 	activeSortField SortField = sortByIP
 	IPColor                   = common.ColorWhite
 	rTotColor                 = common.ColorWhite
+	rTotRateColor             = common.ColorWhite
 	r2xxColor                 = common.ColorWhite
 	r3xxColor                 = common.ColorWhite
 	r4xxColor                 = common.ColorWhite
@@ -71,6 +73,8 @@ func (p PairList) Less(i, j int) bool {
 		return p[i].Value.IP < p[j].Value.IP
 	case sortByRTot:
 		return p[i].Value.RTotal < p[j].Value.RTotal
+	case sortByRTotRate:
+		return p[i].Value.RTotRate < p[j].Value.RTotRate
 	case sortByR2xx:
 		return p[i].Value.R2xx < p[j].Value.R2xx
 	case sortByR3xx:
@@ -120,6 +124,8 @@ func colorSortedColumn() {
 		IPColor = common.ColorBlue
 	case sortByRTot:
 		rTotColor = common.ColorBlue
+	case sortByRTotRate:
+		rTotRateColor = common.ColorBlue
 	case sortByR2xx:
 		r2xxColor = common.ColorBlue
 	case sortByR3xx:
