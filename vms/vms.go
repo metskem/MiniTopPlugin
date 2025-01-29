@@ -7,14 +7,19 @@ import (
 	"github.com/metskem/rommel/MiniTopPlugin/common"
 	"github.com/metskem/rommel/MiniTopPlugin/conf"
 	"github.com/metskem/rommel/MiniTopPlugin/util"
+	"github.com/prometheus/common/expfmt"
+	"net/http"
 	"time"
 )
 
 type CellMetric struct {
-	LastSeen time.Time
-	Job      string
-	IP       string
-	Tags     map[string]float64
+	LastSeen   time.Time
+	Job        string
+	IP         string
+	Tags       map[string]float64
+	NodeLoad1  float64
+	NodeLoad5  float64
+	NodeLoad15 float64
 }
 
 const (
@@ -48,21 +53,31 @@ var (
 	metricAvgEnvlps        = "average_envelopes"
 	//metricDopplerConnections = "doppler_connections"
 	//metricActiveDrains       = "active_drains"
-	metricNumCPUS   = "numCPUS"
-	metricResponses = "responses"
-	metric2xx       = "responses.2xx"
-	metric3xx       = "responses.3xx"
-	metric4xx       = "responses.4xx"
-	metric5xx       = "responses.5xx"
-	MetricNames     = []string{TagJob, TagIP, metricAge, metricUpTime, metricCapacityAllocatedMemory, metricContainerUsageMemory, metricCapacityTotalDisk, metricContainerUsageDisk, metricContainerCount, metricCapacityTotalMemory, metricIPTablesRuleCount, metricOverlayTxBytes, metricOverlayRxBytes, metricHTTPRouteCount, metricOverlayRxDropped, metricOverlayTxDropped, metricNumCPUS, metricResponses, metric2xx, metric3xx, metric4xx, metric5xx, metricAIELRL, metricNzlIngr, metricNzlEgr, metricAvgEnvlps}
-	TotalCPU        float64
-	TotalMem        float64
-	TotalMemAlloc   float64
-	TotalMemUsd     float64
-	TotalDisk       float64
-	TotalDiskUsd    float64
-	TotalCntnrs     float64
+	metricNumCPUS          = "numCPUS"
+	metricResponses        = "responses"
+	metric2xx              = "responses.2xx"
+	metric3xx              = "responses.3xx"
+	metric4xx              = "responses.4xx"
+	metric5xx              = "responses.5xx"
+	MetricNames            = []string{TagJob, TagIP, metricAge, metricUpTime, metricCapacityAllocatedMemory, metricContainerUsageMemory, metricCapacityTotalDisk, metricContainerUsageDisk, metricContainerCount, metricCapacityTotalMemory, metricIPTablesRuleCount, metricOverlayTxBytes, metricOverlayRxBytes, metricHTTPRouteCount, metricOverlayRxDropped, metricOverlayTxDropped, metricNumCPUS, metricResponses, metric2xx, metric3xx, metric4xx, metric5xx, metricAIELRL, metricNzlIngr, metricNzlEgr, metricAvgEnvlps}
+	TotalCPU               float64
+	TotalMem               float64
+	TotalMemAlloc          float64
+	TotalMemUsd            float64
+	TotalDisk              float64
+	TotalDiskUsd           float64
+	TotalCntnrs            float64
+	nodeExporters          = make(map[string]NodeExporter)
+	nodeExporterHttpClient = &http.Client{Timeout: 3 * time.Second}
 )
+
+type NodeExporter struct {
+	LastSeen  time.Time
+	IP        string
+	CPULoad1  float64
+	CPULoad5  float64
+	CPULoad15 float64
+}
 
 func SetKeyBindings(gui *gocui.Gui) {
 	_ = gui.SetKeybinding("VMView", gocui.KeyArrowRight, gocui.ModNone, arrowRight)
@@ -242,16 +257,19 @@ func refreshViewContent(gui *gocui.Gui) {
 		defer common.MapLock.Unlock()
 		lineCounter := 0
 		mainView.Title = "VMs"
-		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %13s %-14s %11s %7s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %6s %5s %5s %5s %5s %7s %7s %6s %8s %s\n", common.ColorYellow,
-			"LASTSEEN", "Job", "IP", "UpTime", "NumCPU", "MemTot", "MemAlloc", "MemUsd", "DiskTot", "DiskUsd", "CntrCnt", "IPTR", "OVTX", "OVRX", "HTTPRC", "OVRXDrop", "OVTXDrop", "TOT_REQ", "2XX", "3XX", "4XX", "5XX", "AIELRL", "NzlIngr", "NzlEgr", "AvgEnvlp", common.ColorReset))
+		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %13s %-14s %11s %7s %6s %6s %6s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %6s %5s %5s %5s %5s %7s %7s %6s %8s %s\n", common.ColorYellow,
+			"LASTSEEN", "Job", "IP", "UpTime", "NumCPU", "Load 1", "5", "15", "MemTot", "MemAlloc", "MemUsd", "DiskTot", "DiskUsd", "CntrCnt", "IPTR", "OVTX", "OVRX", "HTTPRC", "OVRXDrop", "OVTXDrop", "TOT_REQ", "2XX", "3XX", "4XX", "5XX", "AIELRL", "NzlIngr", "NzlEgr", "AvgEnvlp", common.ColorReset))
 		for _, pairlist := range sortedBy(CellMetricMap, common.ActiveSortDirection, activeSortField) {
 			if passFilter(pairlist) {
-				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%13s%s %s%-14s%s %s%11s%s %s%7s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
+				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%13s%s %s%-14s%s %s%11s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
 					common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
 					JobColor, util.TruncateString(pairlist.Value.Job, 13), common.ColorReset,
 					common.IPColor, pairlist.Value.IP, common.ColorReset,
 					upTimeColor, util.GetFormattedElapsedTime(1000*1000*1000*pairlist.Value.Tags[metricUpTime]), common.ColorReset,
 					numCPUSColor, util.GetFormattedUnit(pairlist.Value.Tags[metricNumCPUS]), common.ColorReset,
+					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad1), common.ColorReset,
+					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad5), common.ColorReset,
+					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad15), common.ColorReset,
 					capacityTotalMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalMemory]), common.ColorReset,
 					capacityAllocatedMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityAllocatedMemory]), common.ColorReset,
 					containerUsageMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageMemory]), common.ColorReset,
@@ -332,5 +350,58 @@ func CalculateTotals() {
 		TotalDisk = TotalDisk + cellMetric.Tags[metricCapacityTotalDisk]
 		TotalDiskUsd = TotalDiskUsd + cellMetric.Tags[metricContainerUsageDisk]
 		TotalCntnrs = TotalCntnrs + cellMetric.Tags[metricContainerCount]
+	}
+}
+
+func CollectNodeExporterMetrics() {
+	common.MapLock.Lock()
+	for _, cellMetric := range CellMetricMap {
+		if _, ok := nodeExporters[cellMetric.IP]; !ok {
+			nodeExporters[cellMetric.IP] = NodeExporter{LastSeen: time.Now(), IP: cellMetric.IP}
+		}
+	}
+	for k, exporter := range nodeExporters {
+		if time.Since(exporter.LastSeen) > 2*time.Minute {
+			delete(nodeExporters, k)
+		}
+	}
+	common.MapLock.Unlock()
+
+	for key, exporter := range nodeExporters {
+		util.WriteToFileDebug(fmt.Sprintf("scraping NodeExporter: %s", exporter.IP))
+		scrapeNodeExporter(key)
+	}
+
+	common.MapLock.Lock()
+	defer common.MapLock.Unlock()
+	for _, exporter := range nodeExporters {
+		cellMetric := CellMetricMap[exporter.IP]
+		cellMetric.NodeLoad1 = exporter.CPULoad1
+		cellMetric.NodeLoad5 = exporter.CPULoad5
+		cellMetric.NodeLoad15 = exporter.CPULoad15
+		CellMetricMap[exporter.IP] = cellMetric
+	}
+}
+
+func scrapeNodeExporter(exporterIP string) {
+	url := fmt.Sprintf("http://%s:%d/metrics", exporterIP, conf.NodeExporterPort)
+	util.WriteToFileDebug(fmt.Sprintf("Scraping %s...", url))
+	req, _ := http.NewRequest("GET", url, nil)
+	resp, err := nodeExporterHttpClient.Do(req)
+	if err != nil {
+		util.WriteToFile(fmt.Sprintf("Error while scraping %s : %s\n", exporterIP, err))
+	} else {
+		defer func() { _ = resp.Body.Close() }()
+		var parser expfmt.TextParser
+		metricFamily, err := parser.TextToMetricFamilies(resp.Body)
+		if err != nil {
+			util.WriteToFile(fmt.Sprintf("Error while parsing response from %s : %s\n", exporterIP, err))
+		} else {
+			exporter := nodeExporters[exporterIP]
+			exporter.CPULoad1 = *metricFamily["node_load1"].Metric[0].Gauge.Value
+			exporter.CPULoad5 = *metricFamily["node_load5"].Metric[0].Gauge.Value
+			exporter.CPULoad15 = *metricFamily["node_load15"].Metric[0].Gauge.Value
+			nodeExporters[exporterIP] = exporter
+		}
 	}
 }

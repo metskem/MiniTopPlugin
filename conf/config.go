@@ -5,13 +5,18 @@ import (
 	"fmt"
 )
 
+const NodeExporterScrapeIntervalSeconds = 20
+
 var (
 	ApiAddr          string
 	ShardId          = "MiniTopPlugin"
+	LogFile          = "/tmp/MiniTopPlugin.log"
 	IntervalSecs     = 1
 	UseDebugging     bool
 	UseRepRtrLogging bool
 	UseRouteEvents   bool
+	UseNodeExporter  bool
+	NodeExporterPort = 9100
 )
 
 func EnvironmentComplete(cliConnection plugin.CliConnection) bool {

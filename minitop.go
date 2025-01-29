@@ -38,11 +38,25 @@ var (
 )
 
 func startMT(cliConnection plugin.CliConnection) {
+
+	file, err := os.OpenFile(conf.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		fmt.Printf("Error opening log file %s : %s\n", conf.LogFile, err)
+		return
+	}
+	defer func() { _ = file.Close() }()
+
+	// Redirect stdout/stderr to the file
+	os.Stdout = file
+	os.Stderr = file
+
 	flaggy.DefaultParser.ShowHelpOnUnexpected = false
 	flaggy.DefaultParser.ShowVersionWithVersionFlag = false
 	flaggy.Bool(&conf.UseRepRtrLogging, "l", "includeAppLogs", "Include logs from REP and RTR (more CPU overhead)")
 	flaggy.Bool(&conf.UseRouteEvents, "r", "includeRouteEvents", "Include timer events (http start/stop) (more CPU overhead)")
 	flaggy.Bool(&conf.UseDebugging, "d", "debug", "Run with debugging on/off")
+	flaggy.Bool(&conf.UseNodeExporter, "n", "nodeExporter", "Include node exporter metrics (you need network access to the node exporter on the BOSH managed VMs)")
+	flaggy.Int(&conf.NodeExporterPort, "p", "nodeExporterPort", "Node exporter port (default 9100)")
 	flaggy.Parse()
 	if !conf.EnvironmentComplete(cliConnection) {
 		os.Exit(8)
@@ -300,6 +314,15 @@ func startMT(cliConnection plugin.CliConnection) {
 			common.MapLock.Unlock()
 		}
 	}()
+
+	if conf.UseNodeExporter {
+		go func() {
+			util.WriteToFileDebug("starting node exporter metric collection")
+			for range time.NewTicker(conf.NodeExporterScrapeIntervalSeconds * time.Second).C {
+				vms.CollectNodeExporterMetrics()
+			}
+		}()
+	}
 
 	startCui()
 }

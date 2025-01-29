@@ -59,7 +59,7 @@ func WriteToFileDebug(text string) {
 func WriteToFile(text string) {
 	var err error
 	if logFile == nil {
-		if logFile, err = os.OpenFile("/tmp/MiniTop.out", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644); err != nil {
+		if logFile, err = os.OpenFile(conf.LogFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644); err != nil {
 			fmt.Printf("Error opening file: %v\n", err)
 			os.Exit(1)
 		}
@@ -88,7 +88,7 @@ func IsTokenValid(tokenString string) (isValid bool) {
 			now := time.Now()
 			if now.After(expireTime) {
 				isValid = false
-				WriteToFile(fmt.Sprintf("Token is expired: %s", expireTime.Format(time.RFC3339)))
+				WriteToFileDebug(fmt.Sprintf("Token is expired: %s", expireTime.Format(time.RFC3339)))
 			} else {
 				isValid = true
 				WriteToFileDebug(fmt.Sprintf("Token is valid: %s", expireTime.Format(time.RFC3339)))

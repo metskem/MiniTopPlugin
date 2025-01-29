@@ -19,6 +19,7 @@ const (
 	FilterFieldSpace
 	FilterFieldRoute
 )
+
 const (
 	AppInstanceView int = iota
 	AppView
