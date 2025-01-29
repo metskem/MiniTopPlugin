@@ -103,3 +103,11 @@ func IsTokenValid(tokenString string) (isValid bool) {
 	}
 	return
 }
+
+// GetFormattedFloat - Transform the input (float) to a string with a given precision, and return "-" if value is zero */
+func GetFormattedFloat(value float64, precision int) any {
+	if value == 0 {
+		return "-"
+	}
+	return fmt.Sprintf("%.*f", precision, value)
+}
