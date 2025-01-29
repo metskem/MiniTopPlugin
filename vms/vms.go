@@ -369,7 +369,7 @@ func CollectNodeExporterMetrics() {
 	}
 	common.MapLock.Unlock()
 
-	for key, _ := range nodeExporters {
+	for key := range nodeExporters {
 		go scrapeNodeExporter(key)
 		time.Sleep(25 * time.Millisecond)
 	}

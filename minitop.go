@@ -320,8 +320,10 @@ func startMT(cliConnection plugin.CliConnection) {
 			time.Sleep(2 * time.Second) // wait for the other go routines to start collecting entries in the CellMetricMap
 			util.WriteToFileDebug("starting node exporter metric collection")
 			for {
-				vms.CollectNodeExporterMetrics()
-				time.Sleep(conf.NodeExporterScrapeIntervalSeconds * time.Second)
+				if common.ActiveView == common.VMView { // don't collect metrics if we're not showing them
+					vms.CollectNodeExporterMetrics()
+					time.Sleep(conf.NodeExporterScrapeIntervalSeconds * time.Second)
+				}
 			}
 		}()
 	}

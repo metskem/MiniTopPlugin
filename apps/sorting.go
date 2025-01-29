@@ -281,5 +281,9 @@ func passFilter(pairList Pair) bool {
 	if !(common.FilterStrings[common.FilterFieldOrg] == "") && !filterRegex.MatchString(pairList.Value.OrgName) {
 		filterPassed = false
 	}
+	filterRegex = regexp.MustCompile(common.FilterStrings[common.FilterFieldIP])
+	if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
+		filterPassed = false
+	}
 	return filterPassed
 }

@@ -123,7 +123,7 @@ func ShowView(gui *gocui.Gui) {
 func showFilterView(g *gocui.Gui, v *gocui.View) error {
 	_ = g // get rid of compiler warning
 	_ = v // get rid of compiler warning
-	if activeInstancesSortField == sortByAppName || activeAppsSortField == sortByAppName || activeInstancesSortField == sortBySpace || activeAppsSortField == sortBySpace || activeInstancesSortField == sortByOrg || activeAppsSortField == sortByOrg {
+	if activeInstancesSortField == sortByAppName || activeAppsSortField == sortByAppName || activeInstancesSortField == sortBySpace || activeAppsSortField == sortBySpace || activeInstancesSortField == sortByOrg || activeAppsSortField == sortByOrg || activeInstancesSortField == sortByIP {
 		common.ShowFilter = true
 	}
 	return nil
@@ -337,33 +337,41 @@ func mkEvtHandler(ch rune) func(g *gocui.Gui, v *gocui.View) error {
 				_, _ = fmt.Fprint(v, string(ch))
 				common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName] + string(ch)
 			}
-		} else {
-			if activeInstancesSortField == sortBySpace || activeAppsSortField == sortBySpace {
-				if ch == rune(gocui.KeyBackspace) {
-					if len(common.FilterStrings[common.FilterFieldSpace]) > 0 {
-						common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace][:len(common.FilterStrings[common.FilterFieldSpace])-1]
-						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldSpace])+1, 1)
-						v.EditDelete(true)
-					}
-					return nil
-				} else {
-					_, _ = fmt.Fprint(v, string(ch))
-					common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace] + string(ch)
+		} else if activeInstancesSortField == sortBySpace || activeAppsSortField == sortBySpace {
+			if ch == rune(gocui.KeyBackspace) {
+				if len(common.FilterStrings[common.FilterFieldSpace]) > 0 {
+					common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace][:len(common.FilterStrings[common.FilterFieldSpace])-1]
+					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldSpace])+1, 1)
+					v.EditDelete(true)
 				}
+				return nil
 			} else {
-				if activeInstancesSortField == sortByOrg || activeAppsSortField == sortByOrg {
-					if ch == rune(gocui.KeyBackspace) {
-						if len(common.FilterStrings[common.FilterFieldOrg]) > 0 {
-							common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg][:len(common.FilterStrings[common.FilterFieldOrg])-1]
-							_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldOrg])+1, 1)
-							v.EditDelete(true)
-						}
-						return nil
-					} else {
-						_, _ = fmt.Fprint(v, string(ch))
-						common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg] + string(ch)
-					}
+				_, _ = fmt.Fprint(v, string(ch))
+				common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace] + string(ch)
+			}
+		} else if activeInstancesSortField == sortByOrg || activeAppsSortField == sortByOrg {
+			if ch == rune(gocui.KeyBackspace) {
+				if len(common.FilterStrings[common.FilterFieldOrg]) > 0 {
+					common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg][:len(common.FilterStrings[common.FilterFieldOrg])-1]
+					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldOrg])+1, 1)
+					v.EditDelete(true)
 				}
+				return nil
+			} else {
+				_, _ = fmt.Fprint(v, string(ch))
+				common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg] + string(ch)
+			}
+		} else if activeInstancesSortField == sortByIP || activeAppsSortField == sortByIP {
+			if ch == rune(gocui.KeyBackspace) {
+				if len(common.FilterStrings[common.FilterFieldIP]) > 0 {
+					common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP][:len(common.FilterStrings[common.FilterFieldIP])-1]
+					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldIP])+1, 1)
+					v.EditDelete(true)
+				}
+				return nil
+			} else {
+				_, _ = fmt.Fprint(v, string(ch))
+				common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP] + string(ch)
 			}
 		}
 		return nil
