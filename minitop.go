@@ -317,9 +317,11 @@ func startMT(cliConnection plugin.CliConnection) {
 
 	if conf.UseNodeExporter {
 		go func() {
+			time.Sleep(2 * time.Second) // wait for the other go routines to start collecting entries in the CellMetricMap
 			util.WriteToFileDebug("starting node exporter metric collection")
-			for range time.NewTicker(conf.NodeExporterScrapeIntervalSeconds * time.Second).C {
+			for {
 				vms.CollectNodeExporterMetrics()
+				time.Sleep(conf.NodeExporterScrapeIntervalSeconds * time.Second)
 			}
 		}()
 	}

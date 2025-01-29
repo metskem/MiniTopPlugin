@@ -15,6 +15,9 @@ const (
 	sortByIP
 	sortByUpTime
 	sortByNumCPUS
+	sortByLoad1
+	sortByLoad5
+	sortByLoad15
 	sortByCapacityTotalMemory
 	sortByCapacityAllocatedMemory
 	sortByContainerUsageMemory
@@ -54,6 +57,9 @@ var (
 	OverlayTxDropped                       = common.ColorWhite
 	HTTPRouteCountColor                    = common.ColorWhite
 	numCPUSColor                           = common.ColorWhite
+	load1Color                             = common.ColorWhite
+	load5Color                             = common.ColorWhite
+	load15Color                            = common.ColorWhite
 	responsesColor                         = common.ColorWhite
 	r2xxColor                              = common.ColorWhite
 	r3xxColor                              = common.ColorWhite
@@ -80,6 +86,9 @@ func colorSortedColumn() {
 	JobColor = common.ColorWhite
 	upTimeColor = common.ColorWhite
 	numCPUSColor = common.ColorWhite
+	load1Color = common.ColorWhite
+	load5Color = common.ColorWhite
+	load15Color = common.ColorWhite
 	capacityTotalMemoryColor = common.ColorWhite
 	capacityAllocatedMemoryColor = common.ColorWhite
 	containerUsageMemoryColor = common.ColorWhite
@@ -136,6 +145,12 @@ func colorSortedColumn() {
 		HTTPRouteCountColor = common.ColorBlue
 	case sortByNumCPUS:
 		numCPUSColor = common.ColorBlue
+	case sortByLoad1:
+		load1Color = common.ColorBlue
+	case sortByLoad5:
+		load5Color = common.ColorBlue
+	case sortByLoad15:
+		load15Color = common.ColorBlue
 	case sortByResponses:
 		responsesColor = common.ColorBlue
 	case sortBy2xx:
@@ -220,6 +235,12 @@ func (p PairList) Less(i, j int) bool {
 		return p[i].Value.Tags[metricHTTPRouteCount] < p[j].Value.Tags[metricHTTPRouteCount]
 	case sortByNumCPUS:
 		return p[i].Value.Tags[metricNumCPUS] < p[j].Value.Tags[metricNumCPUS]
+	case sortByLoad1:
+		return p[i].Value.NodeLoad1 < p[j].Value.NodeLoad1
+	case sortByLoad5:
+		return p[i].Value.NodeLoad5 < p[j].Value.NodeLoad5
+	case sortByLoad15:
+		return p[i].Value.NodeLoad15 < p[j].Value.NodeLoad15
 	case sortByResponses:
 		return p[i].Value.Tags[metricResponses] < p[j].Value.Tags[metricResponses]
 	case sortBy2xx:

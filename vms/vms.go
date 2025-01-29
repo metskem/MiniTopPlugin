@@ -9,6 +9,7 @@ import (
 	"github.com/metskem/rommel/MiniTopPlugin/util"
 	"github.com/prometheus/common/expfmt"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -68,7 +69,8 @@ var (
 	TotalDiskUsd           float64
 	TotalCntnrs            float64
 	nodeExporters          = make(map[string]NodeExporter)
-	nodeExporterHttpClient = &http.Client{Timeout: 3 * time.Second}
+	nodeExporterMapLock    sync.Mutex
+	nodeExporterHttpClient = &http.Client{Transport: &http.Transport{DisableKeepAlives: true}, Timeout: 3 * time.Second}
 )
 
 type NodeExporter struct {
@@ -267,9 +269,9 @@ func refreshViewContent(gui *gocui.Gui) {
 					common.IPColor, pairlist.Value.IP, common.ColorReset,
 					upTimeColor, util.GetFormattedElapsedTime(1000*1000*1000*pairlist.Value.Tags[metricUpTime]), common.ColorReset,
 					numCPUSColor, util.GetFormattedUnit(pairlist.Value.Tags[metricNumCPUS]), common.ColorReset,
-					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad1), common.ColorReset,
-					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad5), common.ColorReset,
-					numCPUSColor, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad15), common.ColorReset,
+					load1Color, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad1), common.ColorReset,
+					load5Color, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad5), common.ColorReset,
+					load15Color, fmt.Sprintf("%.2f", pairlist.Value.NodeLoad15), common.ColorReset,
 					capacityTotalMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalMemory]), common.ColorReset,
 					capacityAllocatedMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityAllocatedMemory]), common.ColorReset,
 					containerUsageMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageMemory]), common.ColorReset,
@@ -367,9 +369,9 @@ func CollectNodeExporterMetrics() {
 	}
 	common.MapLock.Unlock()
 
-	for key, exporter := range nodeExporters {
-		util.WriteToFileDebug(fmt.Sprintf("scraping NodeExporter: %s", exporter.IP))
-		scrapeNodeExporter(key)
+	for key, _ := range nodeExporters {
+		go scrapeNodeExporter(key)
+		time.Sleep(25 * time.Millisecond)
 	}
 
 	common.MapLock.Lock()
@@ -397,6 +399,8 @@ func scrapeNodeExporter(exporterIP string) {
 		if err != nil {
 			util.WriteToFile(fmt.Sprintf("Error while parsing response from %s : %s\n", exporterIP, err))
 		} else {
+			nodeExporterMapLock.Lock()
+			defer nodeExporterMapLock.Unlock()
 			exporter := nodeExporters[exporterIP]
 			exporter.CPULoad1 = *metricFamily["node_load1"].Metric[0].Gauge.Value
 			exporter.CPULoad5 = *metricFamily["node_load5"].Metric[0].Gauge.Value
