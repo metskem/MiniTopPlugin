@@ -405,6 +405,7 @@ func scrapeNodeExporter(exporterIP string) {
 			exporter.CPULoad1 = *metricFamily["node_load1"].Metric[0].Gauge.Value
 			exporter.CPULoad5 = *metricFamily["node_load5"].Metric[0].Gauge.Value
 			exporter.CPULoad15 = *metricFamily["node_load15"].Metric[0].Gauge.Value
+			exporter.LastSeen = time.Now()
 			nodeExporters[exporterIP] = exporter
 		}
 	}
