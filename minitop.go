@@ -78,10 +78,6 @@ func startMT(cliConnection plugin.CliConnection) {
 	}
 	envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: selectors})
 
-	type metricOnIPs struct {
-		IPs map[string]bool
-	}
-
 	go func() {
 		for {
 			for _, envelope := range envelopeStream() {
