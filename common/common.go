@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/awesome-gocui/gocui"
+	"github.com/metskem/rommel/MiniTopPlugin/conf"
 	"github.com/metskem/rommel/MiniTopPlugin/util"
 	"sort"
 	"sync"
@@ -40,6 +41,7 @@ var (
 	ColorYellow             = "\033[33m"
 	ColorBlue               = "\033[36m"
 	ColorWhite              = "\033[97m"
+	ColorGrey               = "\033[30;1m"
 	MapLock                 sync.Mutex
 	TotalEnvelopes          float64
 	TotalEnvelopesPerSec    float64
@@ -128,9 +130,13 @@ func ShowToggleViewLayout(g *gocui.Gui) error {
 			lines[0] = []string{"", "VM View", ""}
 			lines[1] = []string{"", "Application View", ""}
 			lines[2] = []string{"", "Application Instance View", ""}
-			lines[3] = []string{"", "Route View (-r required)", ""}
-			lines[4] = []string{"", "Client View (-r required)", ""}
-
+			if conf.UseRouteEvents {
+				lines[3] = []string{"", "Route View", ""}
+				lines[4] = []string{"", "Client View", ""}
+			} else {
+				lines[3] = []string{ColorGrey, "Route View (-r required)", ColorReset}
+				lines[4] = []string{ColorGrey, "Client View (-r required)", ColorReset}
+			}
 			for i := 0; i < len(lines); i++ {
 				if i == currentTogglePosition {
 					lines[i] = []string{colorReverse, lines[i][1], colorReset}
@@ -166,7 +172,11 @@ func arrowDown(g *gocui.Gui, v *gocui.View) error {
 func arrowUp(g *gocui.Gui, v *gocui.View) error {
 	_ = g // get rid of compiler warning
 	_ = v // get rid of compiler warning
-	if currentTogglePosition < 4 {
+	maxY := 2
+	if conf.UseRouteEvents {
+		maxY = 4 // only then make the RouteView and ClientView selectable
+	}
+	if currentTogglePosition < maxY {
 		currentTogglePosition += 1
 	}
 	util.WriteToFileDebug(fmt.Sprintf("Toggle arrowUp, currentTogglePosition=%d", currentTogglePosition))

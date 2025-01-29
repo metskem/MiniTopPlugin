@@ -6,10 +6,12 @@ import (
 )
 
 var (
-	ApiAddr      string
-	ShardId      = "MiniTopPlugin"
-	IntervalSecs = 1
-	UseDebugging bool
+	ApiAddr          string
+	ShardId          = "MiniTopPlugin"
+	IntervalSecs     = 1
+	UseDebugging     bool
+	UseRepRtrLogging bool
+	UseRouteEvents   bool
 )
 
 func EnvironmentComplete(cliConnection plugin.CliConnection) bool {

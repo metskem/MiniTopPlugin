@@ -34,16 +34,14 @@ var (
 		//{Message: &loggregator_v2.Selector_Event{Event: &loggregator_v2.EventSelector{}}}, // produces nothing
 	}
 
-	useRepRtrLogging bool
-	useRouteEvents   bool
-	gui              *gocui.Gui
+	gui *gocui.Gui
 )
 
 func startMT(cliConnection plugin.CliConnection) {
 	flaggy.DefaultParser.ShowHelpOnUnexpected = false
 	flaggy.DefaultParser.ShowVersionWithVersionFlag = false
-	flaggy.Bool(&useRepRtrLogging, "l", "includeAppLogs", "Include logs from REP and RTR (more CPU overhead)")
-	flaggy.Bool(&useRouteEvents, "r", "includeRouteEvents", "Include timer events (http start/stop) (more CPU overhead)")
+	flaggy.Bool(&conf.UseRepRtrLogging, "l", "includeAppLogs", "Include logs from REP and RTR (more CPU overhead)")
+	flaggy.Bool(&conf.UseRouteEvents, "r", "includeRouteEvents", "Include timer events (http start/stop) (more CPU overhead)")
 	flaggy.Bool(&conf.UseDebugging, "d", "debug", "Run with debugging on/off")
 	flaggy.Parse()
 	if !conf.EnvironmentComplete(cliConnection) {
@@ -72,10 +70,10 @@ func startMT(cliConnection plugin.CliConnection) {
 	)
 
 	var envelopeStream loggregator.EnvelopeStream
-	if useRouteEvents {
+	if conf.UseRouteEvents {
 		selectors = append(selectors, &loggregator_v2.Selector{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}})
 	}
-	if useRepRtrLogging {
+	if conf.UseRepRtrLogging {
 		selectors = append(selectors, &loggregator_v2.Selector{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}})
 	}
 	envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: selectors})
