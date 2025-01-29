@@ -288,7 +288,6 @@ func refreshViewContent(gui *gocui.Gui) {
 						spaceColor, pairlist.Value.SpaceName, common.ColorReset)
 				}
 			}
-			util.WriteToFile(fmt.Sprintf("lineCounter: %d, maxY: %d", lineCounter, maxY))
 		}
 
 		if common.ActiveView == common.AppView {
