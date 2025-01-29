@@ -65,6 +65,7 @@ func SetKeyBindings(gui *gocui.Gui) {
 	_ = gui.SetKeybinding("", 'h', gocui.ModNone, help)
 	_ = gui.SetKeybinding("", '?', gocui.ModNone, help)
 	_ = gui.SetKeybinding("", 'q', gocui.ModNone, quit)
+	_ = gui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit)
 	_ = gui.SetKeybinding("", 't', gocui.ModNone, SetShowToggleView)
 	_ = gui.SetKeybinding("HelpView", gocui.KeyEnter, gocui.ModNone, handleEnter)
 	_ = gui.SetKeybinding("FilterView", gocui.KeyEnter, gocui.ModNone, handleEnter)
