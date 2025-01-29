@@ -177,6 +177,11 @@ func refreshViewContent(gui *gocui.Gui) {
 		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %-60s %7s %5s %6s %5s %5s %5s %5s %5s %5s %5s %7s  %s\n", common.ColorYellow,
 			"LASTSEEN", "Route", "Req Tot", "Req/s", "Resp(ms)", "2xx", "3xx", "4xx", "5xx", "GETs", "PUTs", "POSTs", "DELETEs", common.ColorReset))
 		for _, pairlist := range sortedBy(RouteMetricMap, common.ActiveSortDirection, activeSortField) {
+			lineCounter++
+			if lineCounter > maxY-7 {
+				//	don't render lines that don't fit on the screen
+				break
+			}
 			if passFilter(pairlist) {
 				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%8s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
 					common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
@@ -193,11 +198,6 @@ func refreshViewContent(gui *gocui.Gui) {
 					POSTsColor, util.GetFormattedUnit(pairlist.Value.POSTs), common.ColorReset,
 					DELETEsColor, util.GetFormattedUnit(pairlist.Value.DELETEs), common.ColorReset,
 				)
-				lineCounter++
-				if lineCounter > maxY-7 {
-					//	don't render lines that don't fit on the screen
-					break
-				}
 			}
 		}
 		for k, v := range RouteMetricMap {

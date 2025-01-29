@@ -322,8 +322,8 @@ func startMT(cliConnection plugin.CliConnection) {
 			for {
 				if common.ActiveView == common.VMView { // don't collect metrics if we're not showing them
 					vms.CollectNodeExporterMetrics()
-					time.Sleep(conf.NodeExporterScrapeIntervalSeconds * time.Second)
 				}
+				time.Sleep(conf.NodeExporterScrapeIntervalSeconds * time.Second)
 			}
 		}()
 	}
