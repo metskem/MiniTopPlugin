@@ -26,34 +26,11 @@ import (
 )
 
 var (
-	baseSelectors = []*loggregator_v2.Selector{
+	selectors = []*loggregator_v2.Selector{
 		{Message: &loggregator_v2.Selector_Gauge{Gauge: &loggregator_v2.GaugeSelector{}}},
 		//{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}},
 		{Message: &loggregator_v2.Selector_Counter{Counter: &loggregator_v2.CounterSelector{}}},
 		//{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}}, // timer events are only http request timings
-		//{Message: &loggregator_v2.Selector_Event{Event: &loggregator_v2.EventSelector{}}}, // produces nothing
-	}
-	logSelectors = []*loggregator_v2.Selector{
-		{Message: &loggregator_v2.Selector_Gauge{Gauge: &loggregator_v2.GaugeSelector{}}},
-		{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}},
-		{Message: &loggregator_v2.Selector_Counter{Counter: &loggregator_v2.CounterSelector{}}},
-		//{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}}, // timer events are only http request timings
-		//{Message: &loggregator_v2.Selector_Event{Event: &loggregator_v2.EventSelector{}}}, // produces nothing
-	}
-
-	timerSelectors = []*loggregator_v2.Selector{
-		{Message: &loggregator_v2.Selector_Gauge{Gauge: &loggregator_v2.GaugeSelector{}}},
-		//{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}},
-		{Message: &loggregator_v2.Selector_Counter{Counter: &loggregator_v2.CounterSelector{}}},
-		{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}}, // timer events are only http request timings
-		//{Message: &loggregator_v2.Selector_Event{Event: &loggregator_v2.EventSelector{}}}, // produces nothing
-	}
-
-	logAndTimerSelectors = []*loggregator_v2.Selector{
-		{Message: &loggregator_v2.Selector_Gauge{Gauge: &loggregator_v2.GaugeSelector{}}},
-		{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}},
-		{Message: &loggregator_v2.Selector_Counter{Counter: &loggregator_v2.CounterSelector{}}},
-		{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}}, // timer events are only http request timings
 		//{Message: &loggregator_v2.Selector_Event{Event: &loggregator_v2.EventSelector{}}}, // produces nothing
 	}
 
@@ -95,19 +72,13 @@ func startMT(cliConnection plugin.CliConnection) {
 	)
 
 	var envelopeStream loggregator.EnvelopeStream
-	if useRepRtrLogging && useRouteEvents {
-		envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: logAndTimerSelectors})
-	} else {
-		if useRepRtrLogging && !useRouteEvents {
-			envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: logSelectors})
-		} else {
-			if !useRepRtrLogging && useRouteEvents {
-				envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: timerSelectors})
-			} else {
-				envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: baseSelectors})
-			}
-		}
+	if useRouteEvents {
+		selectors = append(selectors, &loggregator_v2.Selector{Message: &loggregator_v2.Selector_Timer{Timer: &loggregator_v2.TimerSelector{}}})
 	}
+	if useRepRtrLogging {
+		selectors = append(selectors, &loggregator_v2.Selector{Message: &loggregator_v2.Selector_Log{Log: &loggregator_v2.LogSelector{}}})
+	}
+	envelopeStream = rlpGatewayClient.Stream(rlpCtx, &loggregator_v2.EgressBatchRequest{ShardId: conf.ShardId, Selectors: selectors})
 
 	type metricOnIPs struct {
 		IPs map[string]bool
