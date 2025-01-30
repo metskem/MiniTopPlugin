@@ -8,20 +8,20 @@ import (
 )
 
 var (
-	appNameColor                       = common.ColorWhite
-	cpuPercColor                       = common.ColorWhite
-	ixColor                            = common.ColorWhite
-	cpuTotColor                        = common.ColorWhite
-	memoryColor                        = common.ColorWhite
-	memoryLimitColor                   = common.ColorWhite
-	diskColor                          = common.ColorWhite
-	logRateColor                       = common.ColorWhite
-	logRateLimitColor                  = common.ColorWhite
-	entColor                           = common.ColorWhite
-	logRepColor                        = common.ColorWhite
-	logRtrColor                        = common.ColorWhite
-	orgColor                           = common.ColorWhite
-	spaceColor                         = common.ColorWhite
+	appNameColor                       = common.ColorYellow
+	cpuPercColor                       = common.ColorYellow
+	ixColor                            = common.ColorYellow
+	cpuTotColor                        = common.ColorYellow
+	memoryColor                        = common.ColorYellow
+	memoryLimitColor                   = common.ColorYellow
+	diskColor                          = common.ColorYellow
+	logRateColor                       = common.ColorYellow
+	logRateLimitColor                  = common.ColorYellow
+	entColor                           = common.ColorYellow
+	logRepColor                        = common.ColorYellow
+	logRtrColor                        = common.ColorYellow
+	orgColor                           = common.ColorYellow
+	spaceColor                         = common.ColorYellow
 	activeInstancesSortField SortField = sortByCpuPerc
 	activeAppsSortField      SortField = sortByCpuPerc
 )
@@ -85,23 +85,23 @@ func arrowLeft(g *gocui.Gui, v *gocui.View) error {
 }
 
 func colorSortedColumn() {
-	appNameColor = common.ColorWhite
-	common.LastSeenColor = common.ColorWhite
-	common.AgeColor = common.ColorWhite
-	cpuPercColor = common.ColorWhite
-	ixColor = common.ColorWhite
-	cpuTotColor = common.ColorWhite
-	memoryColor = common.ColorWhite
-	memoryLimitColor = common.ColorWhite
-	diskColor = common.ColorWhite
-	logRateColor = common.ColorWhite
-	logRateLimitColor = common.ColorWhite
-	entColor = common.ColorWhite
-	common.IPColor = common.ColorWhite
-	logRepColor = common.ColorWhite
-	logRtrColor = common.ColorWhite
-	orgColor = common.ColorWhite
-	spaceColor = common.ColorWhite
+	appNameColor = common.ColorYellow
+	common.LastSeenColor = common.ColorYellow
+	common.AgeColor = common.ColorYellow
+	cpuPercColor = common.ColorYellow
+	ixColor = common.ColorYellow
+	cpuTotColor = common.ColorYellow
+	memoryColor = common.ColorYellow
+	memoryLimitColor = common.ColorYellow
+	diskColor = common.ColorYellow
+	logRateColor = common.ColorYellow
+	logRateLimitColor = common.ColorYellow
+	entColor = common.ColorYellow
+	common.IPColor = common.ColorYellow
+	logRepColor = common.ColorYellow
+	logRtrColor = common.ColorYellow
+	orgColor = common.ColorYellow
+	spaceColor = common.ColorYellow
 	if common.ActiveView == common.AppInstanceView {
 		switch activeInstancesSortField {
 		case sortByAppName:

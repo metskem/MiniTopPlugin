@@ -26,17 +26,17 @@ const (
 
 var (
 	activeSortField SortField = sortByIP
-	IPColor                   = common.ColorWhite
-	rTotColor                 = common.ColorWhite
-	rTotRateColor             = common.ColorWhite
-	r2xxColor                 = common.ColorWhite
-	r3xxColor                 = common.ColorWhite
-	r4xxColor                 = common.ColorWhite
-	r5xxColor                 = common.ColorWhite
-	GETsColor                 = common.ColorWhite
-	PUTsColor                 = common.ColorWhite
-	POSTsColor                = common.ColorWhite
-	DELETEsColor              = common.ColorWhite
+	IPColor                   = common.ColorYellow
+	rTotColor                 = common.ColorYellow
+	rTotRateColor             = common.ColorYellow
+	r2xxColor                 = common.ColorYellow
+	r3xxColor                 = common.ColorYellow
+	r4xxColor                 = common.ColorYellow
+	r5xxColor                 = common.ColorYellow
+	GETsColor                 = common.ColorYellow
+	PUTsColor                 = common.ColorYellow
+	POSTsColor                = common.ColorYellow
+	DELETEsColor              = common.ColorYellow
 )
 
 // based on https://stackoverflow.com/questions/18695346/how-to-sort-a-mapstringint-by-its-values
@@ -106,17 +106,17 @@ func passFilter(pairList Pair) bool {
 }
 
 func colorSortedColumn() {
-	common.LastSeenColor = common.ColorWhite
-	IPColor = common.ColorWhite
-	rTotColor = common.ColorWhite
-	r2xxColor = common.ColorWhite
-	r3xxColor = common.ColorWhite
-	r4xxColor = common.ColorWhite
-	r5xxColor = common.ColorWhite
-	GETsColor = common.ColorWhite
-	PUTsColor = common.ColorWhite
-	POSTsColor = common.ColorWhite
-	DELETEsColor = common.ColorWhite
+	common.LastSeenColor = common.ColorYellow
+	IPColor = common.ColorYellow
+	rTotColor = common.ColorYellow
+	r2xxColor = common.ColorYellow
+	r3xxColor = common.ColorYellow
+	r4xxColor = common.ColorYellow
+	r5xxColor = common.ColorYellow
+	GETsColor = common.ColorYellow
+	PUTsColor = common.ColorYellow
+	POSTsColor = common.ColorYellow
+	DELETEsColor = common.ColorYellow
 	switch activeSortField {
 	case sortByLastSeen:
 		common.LastSeenColor = common.ColorBlue

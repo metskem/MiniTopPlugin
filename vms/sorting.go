@@ -42,33 +42,33 @@ const (
 )
 
 var (
-	upTimeColor                            = common.ColorWhite
-	JobColor                               = common.ColorWhite
-	containerUsageMemoryColor              = common.ColorWhite
-	CapacityTotalDiskColor                 = common.ColorWhite
-	containerUsageDiskColor                = common.ColorWhite
-	containerCountColor                    = common.ColorWhite
-	capacityTotalMemoryColor               = common.ColorWhite
-	capacityAllocatedMemoryColor           = common.ColorWhite
-	IPTablesRuleCountColor                 = common.ColorWhite
-	OverlayTxBytesColor                    = common.ColorWhite
-	OverlayRxBytesColor                    = common.ColorWhite
-	OverlayRxDroppedColor                  = common.ColorWhite
-	OverlayTxDroppedColor                  = common.ColorWhite
-	HTTPRouteCountColor                    = common.ColorWhite
-	numCPUSColor                           = common.ColorWhite
-	load1Color                             = common.ColorWhite
-	load5Color                             = common.ColorWhite
-	load15Color                            = common.ColorWhite
-	responsesColor                         = common.ColorWhite
-	r2xxColor                              = common.ColorWhite
-	r3xxColor                              = common.ColorWhite
-	r4xxColor                              = common.ColorWhite
-	r5xxColor                              = common.ColorWhite
-	AIELRLColor                            = common.ColorWhite
-	NzlIngrColor                           = common.ColorWhite
-	NzlEgrColor                            = common.ColorWhite
-	avgEnvlpsColor                         = common.ColorWhite
+	upTimeColor                            = common.ColorYellow
+	JobColor                               = common.ColorYellow
+	containerUsageMemoryColor              = common.ColorYellow
+	CapacityTotalDiskColor                 = common.ColorYellow
+	containerUsageDiskColor                = common.ColorYellow
+	containerCountColor                    = common.ColorYellow
+	capacityTotalMemoryColor               = common.ColorYellow
+	capacityAllocatedMemoryColor           = common.ColorYellow
+	IPTablesRuleCountColor                 = common.ColorYellow
+	OverlayTxBytesColor                    = common.ColorYellow
+	OverlayRxBytesColor                    = common.ColorYellow
+	OverlayRxDroppedColor                  = common.ColorYellow
+	OverlayTxDroppedColor                  = common.ColorYellow
+	HTTPRouteCountColor                    = common.ColorYellow
+	numCPUSColor                           = common.ColorYellow
+	load1Color                             = common.ColorYellow
+	load5Color                             = common.ColorYellow
+	load15Color                            = common.ColorYellow
+	responsesColor                         = common.ColorYellow
+	r2xxColor                              = common.ColorYellow
+	r3xxColor                              = common.ColorYellow
+	r4xxColor                              = common.ColorYellow
+	r5xxColor                              = common.ColorYellow
+	AIELRLColor                            = common.ColorYellow
+	NzlIngrColor                           = common.ColorYellow
+	NzlEgrColor                            = common.ColorYellow
+	avgEnvlpsColor                         = common.ColorYellow
 	activeSortField              SortField = sortByIP
 )
 
