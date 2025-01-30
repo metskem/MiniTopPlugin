@@ -39,17 +39,6 @@ var (
 
 func startMT(cliConnection plugin.CliConnection) {
 
-	file, err := os.OpenFile(conf.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Printf("Error opening log file %s : %s\n", conf.LogFile, err)
-		return
-	}
-	defer func() { _ = file.Close() }()
-
-	// Redirect stdout/stderr to the file
-	os.Stdout = file
-	os.Stderr = file
-
 	flaggy.DefaultParser.ShowHelpOnUnexpected = false
 	flaggy.DefaultParser.ShowVersionWithVersionFlag = false
 	flaggy.Bool(&conf.UseRepRtrLogging, "l", "includeAppLogs", "Include logs from REP and RTR (more CPU overhead)")

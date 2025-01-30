@@ -40,6 +40,7 @@ var (
 	IPColor                 = ColorWhite
 	ColorReset              = "\033[0m"
 	ColorYellow             = "\033[33m"
+	ColorRed                = "\033[31m"
 	ColorBlue               = "\033[36m"
 	ColorWhite              = "\033[97m"
 	ColorGrey               = "\033[30;1m"

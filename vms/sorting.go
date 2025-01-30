@@ -54,7 +54,7 @@ var (
 	OverlayTxBytesColor                    = common.ColorWhite
 	OverlayRxBytesColor                    = common.ColorWhite
 	OverlayRxDroppedColor                  = common.ColorWhite
-	OverlayTxDropped                       = common.ColorWhite
+	OverlayTxDroppedColor                  = common.ColorWhite
 	HTTPRouteCountColor                    = common.ColorWhite
 	numCPUSColor                           = common.ColorWhite
 	load1Color                             = common.ColorWhite
@@ -80,36 +80,36 @@ func spacePressed(g *gocui.Gui, v *gocui.View) error {
 }
 
 func colorSortedColumn() {
-	common.LastSeenColor = common.ColorWhite
-	common.AgeColor = common.ColorWhite
-	common.IPColor = common.ColorWhite
-	JobColor = common.ColorWhite
-	upTimeColor = common.ColorWhite
-	numCPUSColor = common.ColorWhite
-	load1Color = common.ColorWhite
-	load5Color = common.ColorWhite
-	load15Color = common.ColorWhite
-	capacityTotalMemoryColor = common.ColorWhite
-	capacityAllocatedMemoryColor = common.ColorWhite
-	containerUsageMemoryColor = common.ColorWhite
-	CapacityTotalDiskColor = common.ColorWhite
-	containerUsageDiskColor = common.ColorWhite
-	containerCountColor = common.ColorWhite
-	IPTablesRuleCountColor = common.ColorWhite
-	OverlayTxBytesColor = common.ColorWhite
-	OverlayRxBytesColor = common.ColorWhite
-	HTTPRouteCountColor = common.ColorWhite
-	OverlayRxDroppedColor = common.ColorWhite
-	OverlayTxDropped = common.ColorWhite
-	responsesColor = common.ColorWhite
-	r2xxColor = common.ColorWhite
-	r3xxColor = common.ColorWhite
-	r4xxColor = common.ColorWhite
-	r5xxColor = common.ColorWhite
-	AIELRLColor = common.ColorWhite
-	NzlIngrColor = common.ColorWhite
-	NzlEgrColor = common.ColorWhite
-	avgEnvlpsColor = common.ColorWhite
+	common.LastSeenColor = common.ColorYellow
+	common.AgeColor = common.ColorYellow
+	common.IPColor = common.ColorYellow
+	JobColor = common.ColorYellow
+	upTimeColor = common.ColorYellow
+	numCPUSColor = common.ColorYellow
+	load1Color = common.ColorYellow
+	load5Color = common.ColorYellow
+	load15Color = common.ColorYellow
+	capacityTotalMemoryColor = common.ColorYellow
+	capacityAllocatedMemoryColor = common.ColorYellow
+	containerUsageMemoryColor = common.ColorYellow
+	CapacityTotalDiskColor = common.ColorYellow
+	containerUsageDiskColor = common.ColorYellow
+	containerCountColor = common.ColorYellow
+	IPTablesRuleCountColor = common.ColorYellow
+	OverlayTxBytesColor = common.ColorYellow
+	OverlayRxBytesColor = common.ColorYellow
+	HTTPRouteCountColor = common.ColorYellow
+	OverlayRxDroppedColor = common.ColorYellow
+	OverlayTxDroppedColor = common.ColorYellow
+	responsesColor = common.ColorYellow
+	r2xxColor = common.ColorYellow
+	r3xxColor = common.ColorYellow
+	r4xxColor = common.ColorYellow
+	r5xxColor = common.ColorYellow
+	AIELRLColor = common.ColorYellow
+	NzlIngrColor = common.ColorYellow
+	NzlEgrColor = common.ColorYellow
+	avgEnvlpsColor = common.ColorYellow
 	switch activeSortField {
 	case sortByLastSeen:
 		common.LastSeenColor = common.ColorBlue
@@ -140,7 +140,7 @@ func colorSortedColumn() {
 	case sortByOverlayRxDropped:
 		OverlayRxDroppedColor = common.ColorBlue
 	case sortByOverlayTxDropped:
-		OverlayTxDropped = common.ColorBlue
+		OverlayTxDroppedColor = common.ColorBlue
 	case sortByHTTPRouteCount:
 		HTTPRouteCountColor = common.ColorBlue
 	case sortByNumCPUS:

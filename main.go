@@ -36,8 +36,14 @@ func (c *MTPlugin) Run(cliConnection plugin.CliConnection, args []string) {
 // The first field Name defines the command `cf basic-plugin-command` once installed into the CLI.
 // The second field, HelpText, is used by the core CLI to display help information to the user in the core commands `cf help`, `cf`, or `cf -h`.
 func (c *MTPlugin) GetMetadata() plugin.PluginMetadata {
-	var MiniTopHelpText = "show app statistics realtime"
-	var MiniTopUsage = "mt"
+	var MiniTopHelpText = "show app(instance), vm, route and client statistics realtime"
+	var MiniTopUsage = "mt\n" +
+		"   -r - include Timer events (needed for Route and Client view)\n" +
+		"   -d - include debugging (to /tmp/MiniTopPlugin.log)\n" +
+		"   -l - include rep en rtr logging (more cpu overhead)\n" +
+		"   -n - include node exporter data, to show the VM load1/5/15 (requires network access to node_exporters)\n" +
+		"   -p - port of node exporters\n" +
+		"   -h - show this help"
 	return plugin.PluginMetadata{
 		Name:          "minitop",
 		Version:       plugin.VersionType{Major: version.GetMajorVersion(), Minor: version.GetMinorVersion(), Build: version.GetPatchVersion()},

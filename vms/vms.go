@@ -46,7 +46,7 @@ var (
 	metricOverlayTxBytes   = "OverlayTxBytes"
 	metricOverlayRxBytes   = "OverlayRxBytes"
 	metricOverlayRxDropped = "OverlayRxDropped"
-	metricOverlayTxDropped = "OverlayTxDropped"
+	metricOverlayTxDropped = "OverlayTxDroppedColor"
 	metricHTTPRouteCount   = "HTTPRouteCount"
 	metricAIELRL           = "AppInstanceExceededLogRateLimitCount"
 	metricNzlEgr           = "nozzle_egress"
@@ -205,6 +205,9 @@ func layout(g *gocui.Gui) (err error) {
 				"IP - the IP address of the VM (where the app instance runs)\n"+
 				"UpTime - the time the VM is up\n"+
 				"NumCPU - the number of CPUs\n"+
+				"Load 1 - the CPU load average over the last minute (-n option needed)\n"+
+				"Load 5 - the CPU load average over the last 5 minutes (-n option needed)\n"+
+				"Load 15 - the CPU load average over the last 15 minutes (-n option needed)\n"+
 				"MemTot - the total memory reported (includes optional overcommit)\n"+
 				"MemAlloc - the memory requested by apps\n"+
 				"MemUsd - the memory used by apps\n"+
@@ -259,40 +262,42 @@ func refreshViewContent(gui *gocui.Gui) {
 		defer common.MapLock.Unlock()
 		lineCounter := 0
 		mainView.Title = "VMs"
-		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %13s %-14s %11s %7s %6s %6s %6s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %6s %5s %5s %5s %5s %7s %7s %6s %8s %s\n", common.ColorYellow,
-			"LASTSEEN", "Job", "IP", "UpTime", "NumCPU", "Load 1", "5", "15", "MemTot", "MemAlloc", "MemUsd", "DiskTot", "DiskUsd", "CntrCnt", "IPTR", "OVTX", "OVRX", "HTTPRC", "OVRXDrop", "OVTXDrop", "TOT_REQ", "2XX", "3XX", "4XX", "5XX", "AIELRL", "NzlIngr", "NzlEgr", "AvgEnvlp", common.ColorReset))
+		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%13s%s %s%-14s%s %s%11s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
+			common.LastSeenColor, "LASTSEEN", common.ColorReset, JobColor, "Job", common.ColorReset, common.IPColor, "IP", common.ColorReset, upTimeColor, "UpTime", common.ColorReset, numCPUSColor, "NumCPU", common.ColorReset, load1Color, "Load 1", common.ColorReset, load5Color, "5", common.ColorReset, load15Color, "15", common.ColorReset, capacityTotalMemoryColor, "MemTot", common.ColorReset, capacityAllocatedMemoryColor, "MemAlloc", common.ColorReset, containerUsageMemoryColor, "MemUsd", common.ColorReset, CapacityTotalDiskColor, "DiskTot", common.ColorReset, containerUsageDiskColor, "DiskUsd", common.ColorReset, containerCountColor, "CntrCnt", common.ColorReset, IPTablesRuleCountColor, "IPTR", common.ColorReset, OverlayTxBytesColor, "OVTX", common.ColorReset, OverlayRxBytesColor, "OVRX", common.ColorReset, HTTPRouteCountColor, "HTTPRC", common.ColorReset, OverlayRxDroppedColor, "OVRXDrop", common.ColorReset, OverlayTxDroppedColor, "OVTXDrop", common.ColorReset, responsesColor, "TOT_RSP", common.ColorReset, r2xxColor, "2XX", common.ColorReset, r3xxColor, "3XX", common.ColorReset, r4xxColor, "4XX", common.ColorReset, r5xxColor, "5XX", common.ColorReset, AIELRLColor, "AIELRL", common.ColorReset, NzlIngrColor, "NzlIngr", common.ColorReset, NzlEgrColor, "NzlEgr", common.ColorReset, avgEnvlpsColor, "AvgEnvlp", common.ColorReset))
+
 		for _, pairlist := range sortedBy(CellMetricMap, common.ActiveSortDirection, activeSortField) {
 			if passFilter(pairlist) {
-				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%13s%s %s%-14s%s %s%11s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
-					common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
-					JobColor, util.TruncateString(pairlist.Value.Job, 13), common.ColorReset,
-					common.IPColor, pairlist.Value.IP, common.ColorReset,
-					upTimeColor, util.GetFormattedElapsedTime(1000*1000*1000*pairlist.Value.Tags[metricUpTime]), common.ColorReset,
-					numCPUSColor, util.GetFormattedUnit(pairlist.Value.Tags[metricNumCPUS]), common.ColorReset,
+				alertColor(pairlist.Value)
+				_, _ = fmt.Fprintf(mainView, "%8s %13s %-14s %11s %7s %s%6s%s %s%6s%s %s%6s%s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %7s %5s %5s %5s %5s %7s %7s %6s %8s\n",
+					util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
+					util.TruncateString(pairlist.Value.Job, 13),
+					pairlist.Value.IP,
+					util.GetFormattedElapsedTime(1000*1000*1000*pairlist.Value.Tags[metricUpTime]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricNumCPUS]),
 					load1Color, util.GetFormattedFloat(pairlist.Value.NodeLoad1, 2), common.ColorReset,
 					load5Color, util.GetFormattedFloat(pairlist.Value.NodeLoad5, 2), common.ColorReset,
 					load15Color, util.GetFormattedFloat(pairlist.Value.NodeLoad15, 2), common.ColorReset,
-					capacityTotalMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalMemory]), common.ColorReset,
-					capacityAllocatedMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityAllocatedMemory]), common.ColorReset,
-					containerUsageMemoryColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageMemory]), common.ColorReset,
-					CapacityTotalDiskColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalDisk]), common.ColorReset,
-					containerUsageDiskColor, util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageDisk]), common.ColorReset,
-					containerCountColor, util.GetFormattedUnit(pairlist.Value.Tags[metricContainerCount]), common.ColorReset,
-					IPTablesRuleCountColor, util.GetFormattedUnit(pairlist.Value.Tags[metricIPTablesRuleCount]), common.ColorReset,
-					OverlayTxBytesColor, util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayTxBytes]), common.ColorReset,
-					OverlayRxBytesColor, util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayRxBytes]), common.ColorReset,
-					HTTPRouteCountColor, util.GetFormattedUnit(pairlist.Value.Tags[metricHTTPRouteCount]), common.ColorReset,
-					OverlayRxDroppedColor, util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayRxDropped]), common.ColorReset,
-					OverlayTxDropped, util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayTxDropped]), common.ColorReset,
-					responsesColor, util.GetFormattedUnit(pairlist.Value.Tags[metricResponses]), common.ColorReset,
-					r2xxColor, util.GetFormattedUnit(pairlist.Value.Tags[metric2xx]), common.ColorReset,
-					r3xxColor, util.GetFormattedUnit(pairlist.Value.Tags[metric3xx]), common.ColorReset,
-					r4xxColor, util.GetFormattedUnit(pairlist.Value.Tags[metric4xx]), common.ColorReset,
-					r5xxColor, util.GetFormattedUnit(pairlist.Value.Tags[metric5xx]), common.ColorReset,
-					AIELRLColor, util.GetFormattedUnit(pairlist.Value.Tags[metricAIELRL]), common.ColorReset,
-					NzlIngrColor, util.GetFormattedUnit(pairlist.Value.Tags[metricNzlEgr]), common.ColorReset,
-					NzlEgrColor, util.GetFormattedUnit(pairlist.Value.Tags[metricNzlEgr]), common.ColorReset,
-					avgEnvlpsColor, util.GetFormattedUnit(pairlist.Value.Tags[metricAvgEnvlps]), common.ColorReset,
+					util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalMemory]),
+					util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityAllocatedMemory]),
+					util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageMemory]),
+					util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricCapacityTotalDisk]),
+					util.GetFormattedUnit(1024*1024*pairlist.Value.Tags[metricContainerUsageDisk]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricContainerCount]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricIPTablesRuleCount]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayTxBytes]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayRxBytes]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricHTTPRouteCount]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayRxDropped]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricOverlayTxDropped]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricResponses]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metric2xx]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metric3xx]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metric4xx]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metric5xx]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricAIELRL]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricNzlEgr]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricNzlEgr]),
+					util.GetFormattedUnit(pairlist.Value.Tags[metricAvgEnvlps]),
 				)
 				lineCounter++
 				if lineCounter > maxY-7 {
@@ -301,6 +306,33 @@ func refreshViewContent(gui *gocui.Gui) {
 				}
 			}
 		}
+	}
+}
+
+func alertColor(cellMetric CellMetric) {
+	load1Color = common.ColorReset
+	load5Color = common.ColorReset
+	load15Color = common.ColorReset
+	if cellMetric.Tags[metricNumCPUS] == 0 {
+		return
+	}
+	if cellMetric.NodeLoad1 > 0.8*cellMetric.Tags[metricNumCPUS] {
+		load1Color = common.ColorYellow
+	}
+	if cellMetric.NodeLoad5 > 0.8*cellMetric.Tags[metricNumCPUS] {
+		load5Color = common.ColorYellow
+	}
+	if cellMetric.NodeLoad15 > 0.8*cellMetric.Tags[metricNumCPUS] {
+		load15Color = common.ColorYellow
+	}
+	if cellMetric.NodeLoad1 > cellMetric.Tags[metricNumCPUS] {
+		load1Color = common.ColorRed
+	}
+	if cellMetric.NodeLoad5 > cellMetric.Tags[metricNumCPUS] {
+		load5Color = common.ColorRed
+	}
+	if cellMetric.NodeLoad15 > cellMetric.Tags[metricNumCPUS] {
+		load15Color = common.ColorRed
 	}
 }
 
