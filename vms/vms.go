@@ -9,6 +9,7 @@ import (
 	"github.com/metskem/rommel/MiniTopPlugin/util"
 	"github.com/prometheus/common/expfmt"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -79,6 +80,8 @@ type NodeExporter struct {
 	CPULoad1  float64
 	CPULoad5  float64
 	CPULoad15 float64
+	NumCPUs   int
+	UpTime    float64
 }
 
 func SetKeyBindings(gui *gocui.Gui) {
@@ -262,7 +265,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		defer common.MapLock.Unlock()
 		lineCounter := 0
 		mainView.Title = "VMs"
-		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%13s%s %s%-14s%s %s%11s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
+		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%13s%s %s%-14s%s %s%13s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
 			common.LastSeenColor, "LASTSEEN", common.ColorReset, JobColor, "Job", common.ColorReset, common.IPColor, "IP", common.ColorReset, upTimeColor, "UpTime", common.ColorReset, numCPUSColor, "NumCPU", common.ColorReset, load1Color, "Load 1", common.ColorReset, load5Color, "5", common.ColorReset, load15Color, "15", common.ColorReset, capacityTotalMemoryColor, "MemTot", common.ColorReset, capacityAllocatedMemoryColor, "MemAlloc", common.ColorReset, containerUsageMemoryColor, "MemUsd", common.ColorReset, CapacityTotalDiskColor, "DiskTot", common.ColorReset, containerUsageDiskColor, "DiskUsd", common.ColorReset, containerCountColor, "CntrCnt", common.ColorReset, IPTablesRuleCountColor, "IPTR", common.ColorReset, OverlayTxBytesColor, "OVTX", common.ColorReset, OverlayRxBytesColor, "OVRX", common.ColorReset, HTTPRouteCountColor, "HTTPRC", common.ColorReset, OverlayRxDroppedColor, "OVRXDrop", common.ColorReset, OverlayTxDroppedColor, "OVTXDrop", common.ColorReset, responsesColor, "TOT_RSP", common.ColorReset, r2xxColor, "2XX", common.ColorReset, r3xxColor, "3XX", common.ColorReset, r4xxColor, "4XX", common.ColorReset, r5xxColor, "5XX", common.ColorReset, AIELRLColor, "AIELRL", common.ColorReset, NzlIngrColor, "NzlIngr", common.ColorReset, NzlEgrColor, "NzlEgr", common.ColorReset, avgEnvlpsColor, "AvgEnvlp", common.ColorReset))
 
 		for _, pairlist := range sortedBy(CellMetricMap, common.ActiveSortDirection, activeSortField) {
@@ -273,7 +276,7 @@ func refreshViewContent(gui *gocui.Gui) {
 			}
 			if passFilter(pairlist) {
 				alertColor(pairlist.Value)
-				_, _ = fmt.Fprintf(mainView, "%8s %13s %-14s %11s %7s %s%6s%s %s%6s%s %s%6s%s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %7s %5s %5s %5s %5s %7s %7s %6s %8s\n",
+				_, _ = fmt.Fprintf(mainView, "%8s %13s %-14s %13s %7s %s%6s%s %s%6s%s %s%6s%s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %7s %5s %5s %5s %5s %7s %7s %6s %8s\n",
 					util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
 					util.TruncateString(pairlist.Value.Job, 13),
 					pairlist.Value.IP,
@@ -413,6 +416,8 @@ func CollectNodeExporterMetrics() {
 		cellMetric.NodeLoad1 = exporter.CPULoad1
 		cellMetric.NodeLoad5 = exporter.CPULoad5
 		cellMetric.NodeLoad15 = exporter.CPULoad15
+		cellMetric.Tags[metricNumCPUS] = float64(exporter.NumCPUs)
+		cellMetric.Tags[metricUpTime] = exporter.UpTime
 		CellMetricMap[exporter.IP] = cellMetric
 	}
 }
@@ -423,13 +428,13 @@ func scrapeNodeExporter(exporterIP string) {
 	req, _ := http.NewRequest("GET", url, nil)
 	resp, err := nodeExporterHttpClient.Do(req)
 	if err != nil {
-		util.WriteToFile(fmt.Sprintf("Error while scraping %s : %s\n", exporterIP, err))
+		util.WriteToFile(fmt.Sprintf("Error while scraping %s : %s", exporterIP, err))
 	} else {
 		defer func() { _ = resp.Body.Close() }()
 		var parser expfmt.TextParser
 		metricFamily, err := parser.TextToMetricFamilies(resp.Body)
 		if err != nil {
-			util.WriteToFile(fmt.Sprintf("Error while parsing response from %s : %s\n", exporterIP, err))
+			util.WriteToFile(fmt.Sprintf("Error while parsing response from %s : %s", exporterIP, err))
 		} else {
 			nodeExporterMapLock.Lock()
 			defer nodeExporterMapLock.Unlock()
@@ -437,6 +442,23 @@ func scrapeNodeExporter(exporterIP string) {
 			exporter.CPULoad1 = *metricFamily["node_load1"].Metric[0].Gauge.Value
 			exporter.CPULoad5 = *metricFamily["node_load5"].Metric[0].Gauge.Value
 			exporter.CPULoad15 = *metricFamily["node_load15"].Metric[0].Gauge.Value
+			// not all BOSH VM types report uptime:
+			if mFam, ok := metricFamily["node_boot_time_seconds"]; ok {
+				exporter.UpTime = float64(time.Now().Unix()) - *mFam.Metric[0].Gauge.Value
+			}
+			// not all BOSH VM types report the number of CPUs, so we need to determine the number of CPUs by looking at the highest CPU number:
+			cpuCounter := 0
+			for _, metric := range metricFamily["node_cpu_seconds_total"].Metric {
+				for _, label := range metric.Label {
+					if *label.Name == "cpu" {
+						value, _ := strconv.Atoi(*label.Value)
+						if value > cpuCounter {
+							cpuCounter = value
+						}
+					}
+				}
+			}
+			exporter.NumCPUs = cpuCounter + 1
 			exporter.LastSeen = time.Now()
 			nodeExporters[exporterIP] = exporter
 		}
