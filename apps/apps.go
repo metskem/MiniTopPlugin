@@ -262,59 +262,63 @@ func refreshViewContent(gui *gocui.Gui) {
 		lineCounter := 0
 		if common.ActiveView == common.AppInstanceView {
 			mainView.Title = "Application Instances"
-			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s %8s %12s %5s %9s %6s %9s %7s %6s %9s %7s %-14s %9s %9s %-25s %-35s%s\n", common.ColorYellow, "App/Index", "LastSeen", "UpTime", "Cpu%", "CpuTot", "MemUsd", "MemQuota", "DiskUsd", "LogRt", "LogRtLim", "CpuEnt", "IP", "LogRep", "LogRtr", "Org", "Space", common.ColorReset))
+			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%12s%s %s%5s%s %s%9s%s %s%6s%s %s%9s%s %s%7s%s %s%6s%s %s%9s%s %s%7s%s %s%-14s%s %s%9s%s %s%9s%s %s%-25s%s %s%-35s%s\n",
+				appNameColor, "App/Index", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, common.AgeColor, "UpTime", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsd", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsd", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, common.IPColor, "IP", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(InstanceMetricMap, common.ActiveSortDirection, activeInstancesSortField) {
 				lineCounter++
 				if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
 					break
 				}
 				if passFilter(pairlist) {
-					_, _ = fmt.Fprintf(mainView, "%s%-50s%s %s%5s%s %s%12s%s %s%5s%s %s%9s%s %s%6s%s %s%9s%s %s%7s%s %s%6s%s %s%9s%s %s%7s%s %s%-14s%s %s%9s%s %s%9s%s %s%-25s%s %s%-35s%s\n",
-						appNameColor, fmt.Sprintf("%s/%s(%d)", util.TruncateString(pairlist.Value.AppName, 45), pairlist.Value.AppIndex, AppInstanceCounters[pairlist.Value.AppGuid].Count), common.ColorReset,
-						common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
-						common.AgeColor, util.GetFormattedElapsedTime(pairlist.Value.Tags[metricAge]), common.ColorReset,
-						cpuPercColor, util.GetFormattedUnit(pairlist.Value.Tags[MetricCpu]), common.ColorReset,
-						cpuTotColor, util.GetFormattedUnit(pairlist.Value.CpuTot), common.ColorReset,
-						memoryColor, util.GetFormattedUnit(pairlist.Value.Tags[metricMemory]), common.ColorReset,
-						memoryLimitColor, util.GetFormattedUnit(pairlist.Value.Tags[metricMemoryQuota]), common.ColorReset,
-						diskColor, util.GetFormattedUnit(pairlist.Value.Tags[metricDisk]), common.ColorReset,
-						logRateColor, util.GetFormattedUnit(pairlist.Value.Tags[metricLogRate]), common.ColorReset,
-						logRateLimitColor, util.GetFormattedUnit(pairlist.Value.Tags[metricLogRateLimit]), common.ColorReset,
-						entColor, util.GetFormattedUnit(pairlist.Value.Tags[metricCpuEntitlement]), common.ColorReset,
-						common.IPColor, pairlist.Value.IP, common.ColorReset,
-						logRepColor, util.GetFormattedUnit(pairlist.Value.LogRep), common.ColorReset,
-						logRtrColor, util.GetFormattedUnit(pairlist.Value.LogRtr), common.ColorReset,
-						orgColor, util.TruncateString(pairlist.Value.OrgName, 25), common.ColorReset,
-						spaceColor, pairlist.Value.SpaceName, common.ColorReset)
+					_, _ = fmt.Fprintf(mainView, "%-50s %5s %12s %5s %9s %6s %9s %7s %6s %9s %7s %-14s %9s %9s %-25s %-35s%s\n",
+						fmt.Sprintf("%s/%s(%d)", util.TruncateString(pairlist.Value.AppName, 45),
+							pairlist.Value.AppIndex,
+							AppInstanceCounters[pairlist.Value.AppGuid].Count),
+						util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
+						util.GetFormattedElapsedTime(pairlist.Value.Tags[metricAge]),
+						util.GetFormattedUnit(pairlist.Value.Tags[MetricCpu]),
+						util.GetFormattedUnit(pairlist.Value.CpuTot),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricMemory]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricMemoryQuota]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricDisk]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricLogRate]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricLogRateLimit]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricCpuEntitlement]),
+						pairlist.Value.IP,
+						util.GetFormattedUnit(pairlist.Value.LogRep),
+						util.GetFormattedUnit(pairlist.Value.LogRtr),
+						util.TruncateString(pairlist.Value.OrgName, 25),
+						pairlist.Value.SpaceName, common.ColorReset)
 				}
 			}
 		}
 
 		if common.ActiveView == common.AppView {
 			mainView.Title = "Applications"
-			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s %8s %3s %4s %7s %8s %9s %8s %5s %9s %8s %7s %8s %-25s %-35s%s\n", common.ColorYellow, "App", "LastSeen", "Ix", "Cpu%", "CpuTot", "MemUsed", "MemQuota", "DiskUsed", "LogRt", "LogRtLim", "CpuEnt", "LogRep", "LogRtr", "Org", "Space", common.ColorReset))
+			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%3s%s %s%4s%s %s%7s%s %s%8s%s %s%9s%s %s%8s%s %s%5s%s %s%9s%s %s%8s%s %s%7s%s %s%8s%s %s%-25s%s %s%-35s%s\n",
+				appNameColor, "App", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, ixColor, "Ix", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsed", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsed", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(AppMetricMap, common.ActiveSortDirection, activeAppsSortField) {
 				lineCounter++
 				if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
 					break
 				}
 				if passFilter(pairlist) {
-					_, _ = fmt.Fprintf(mainView, "%s%-50s%s %s%5s%s %s%3d%s %s%4s%s %s%7s%s %s%8s%s %s%9s%s %s%8s%s %s%5s%s %s%9s%s %s%8s%s %s%7s%s %s%8s%s %s%-25s%s %s%-35s%s\n",
-						appNameColor, fmt.Sprintf("%s", util.TruncateString(pairlist.Value.AppName, 45)), common.ColorReset,
-						common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
-						ixColor, pairlist.Value.IxCount, common.ColorReset,
-						cpuPercColor, util.GetFormattedUnit(pairlist.Value.Tags[MetricCpu]), common.ColorReset,
-						cpuTotColor, util.GetFormattedUnit(pairlist.Value.CpuTot), common.ColorReset,
-						memoryColor, util.GetFormattedUnit(pairlist.Value.Tags[metricMemory]), common.ColorReset,
-						memoryLimitColor, util.GetFormattedUnit(pairlist.Value.Tags[metricMemoryQuota]), common.ColorReset,
-						diskColor, util.GetFormattedUnit(pairlist.Value.Tags[metricDisk]), common.ColorReset,
-						logRateColor, util.GetFormattedUnit(pairlist.Value.Tags[metricLogRate]), common.ColorReset,
-						logRateLimitColor, util.GetFormattedUnit(pairlist.Value.Tags[metricLogRateLimit]), common.ColorReset,
-						entColor, util.GetFormattedUnit(pairlist.Value.Tags[metricCpuEntitlement]), common.ColorReset,
-						logRepColor, util.GetFormattedUnit(pairlist.Value.LogRep), common.ColorReset,
-						logRtrColor, util.GetFormattedUnit(pairlist.Value.LogRtr), common.ColorReset,
-						orgColor, util.TruncateString(pairlist.Value.OrgName, 25), common.ColorReset,
-						spaceColor, pairlist.Value.SpaceName, common.ColorReset)
+					_, _ = fmt.Fprintf(mainView, "%-50s %5s %3d %4s %7s %8s %9s %8s %5s %9s %8s %7s %8s %-25s %-35s\n",
+						fmt.Sprintf("%s", util.TruncateString(pairlist.Value.AppName, 45)),
+						util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
+						pairlist.Value.IxCount,
+						util.GetFormattedUnit(pairlist.Value.Tags[MetricCpu]),
+						util.GetFormattedUnit(pairlist.Value.CpuTot),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricMemory]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricMemoryQuota]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricDisk]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricLogRate]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricLogRateLimit]),
+						util.GetFormattedUnit(pairlist.Value.Tags[metricCpuEntitlement]),
+						util.GetFormattedUnit(pairlist.Value.LogRep),
+						util.GetFormattedUnit(pairlist.Value.LogRtr),
+						util.TruncateString(pairlist.Value.OrgName, 25),
+						pairlist.Value.SpaceName)
 				}
 			}
 		}
