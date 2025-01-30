@@ -174,8 +174,8 @@ func refreshViewContent(gui *gocui.Gui) {
 			v.RTotRate = v.RTotal - RouteMetricMapPrevious[k].RTotal
 			RouteMetricMap[k] = v
 		}
-		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s %-60s %7s %5s %6s %5s %5s %5s %5s %5s %5s %5s %7s  %s\n", common.ColorYellow,
-			"LASTSEEN", "Route", "Req Tot", "Req/s", "Resp(ms)", "2xx", "3xx", "4xx", "5xx", "GETs", "PUTs", "POSTs", "DELETEs", common.ColorReset))
+		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
+			common.LastSeenColor, "LASTSEEN", common.ColorReset, routeColor, "Route", common.ColorReset, rTotColor, "Req Tot", common.ColorReset, rTotRateColor, "Req/s", common.ColorReset, respColor, "Resp(ms)", common.ColorReset, r2xxColor, "2xx", common.ColorReset, r3xxColor, "3xx", common.ColorReset, r4xxColor, "4xx", common.ColorReset, r5xxColor, "5xx", common.ColorReset, GETsColor, "GETs", common.ColorReset, PUTsColor, "PUTs", common.ColorReset, POSTsColor, "POSTs", common.ColorReset, DELETEsColor, "DELETEs", common.ColorReset))
 		for _, pairlist := range sortedBy(RouteMetricMap, common.ActiveSortDirection, activeSortField) {
 			lineCounter++
 			if lineCounter > maxY-7 {
@@ -183,20 +183,20 @@ func refreshViewContent(gui *gocui.Gui) {
 				break
 			}
 			if passFilter(pairlist) {
-				_, _ = fmt.Fprintf(mainView, "%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%8s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
-					common.LastSeenColor, util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())), common.ColorReset,
-					routeColor, util.TruncateString(pairlist.Value.Route, 60), common.ColorReset,
-					rTotColor, util.GetFormattedUnit(pairlist.Value.RTotal), common.ColorReset,
-					rTotRateColor, util.GetFormattedUnit(pairlist.Value.RTotRate), common.ColorReset,
-					respColor, util.GetFormattedUnit(pairlist.Value.TotalRespTime/pairlist.Value.RTotal/1024/1024), common.ColorReset,
-					r2xxColor, util.GetFormattedUnit(pairlist.Value.R2xx), common.ColorReset,
-					r3xxColor, util.GetFormattedUnit(pairlist.Value.R3xx), common.ColorReset,
-					r4xxColor, util.GetFormattedUnit(pairlist.Value.R4xx), common.ColorReset,
-					r5xxColor, util.GetFormattedUnit(pairlist.Value.R5xx), common.ColorReset,
-					GETsColor, util.GetFormattedUnit(pairlist.Value.GETs), common.ColorReset,
-					PUTsColor, util.GetFormattedUnit(pairlist.Value.PUTs), common.ColorReset,
-					POSTsColor, util.GetFormattedUnit(pairlist.Value.POSTs), common.ColorReset,
-					DELETEsColor, util.GetFormattedUnit(pairlist.Value.DELETEs), common.ColorReset,
+				_, _ = fmt.Fprintf(mainView, "%8s %-60s %7s %5s %8s %5s %5s %5s %5s %5s %5s %5s %7s\n",
+					util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
+					util.TruncateString(pairlist.Value.Route, 60),
+					util.GetFormattedUnit(pairlist.Value.RTotal),
+					util.GetFormattedUnit(pairlist.Value.RTotRate),
+					util.GetFormattedUnit(pairlist.Value.TotalRespTime/pairlist.Value.RTotal/1024/1024),
+					util.GetFormattedUnit(pairlist.Value.R2xx),
+					util.GetFormattedUnit(pairlist.Value.R3xx),
+					util.GetFormattedUnit(pairlist.Value.R4xx),
+					util.GetFormattedUnit(pairlist.Value.R5xx),
+					util.GetFormattedUnit(pairlist.Value.GETs),
+					util.GetFormattedUnit(pairlist.Value.PUTs),
+					util.GetFormattedUnit(pairlist.Value.POSTs),
+					util.GetFormattedUnit(pairlist.Value.DELETEs),
 				)
 			}
 		}
