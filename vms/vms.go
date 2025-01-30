@@ -266,6 +266,11 @@ func refreshViewContent(gui *gocui.Gui) {
 			common.LastSeenColor, "LASTSEEN", common.ColorReset, JobColor, "Job", common.ColorReset, common.IPColor, "IP", common.ColorReset, upTimeColor, "UpTime", common.ColorReset, numCPUSColor, "NumCPU", common.ColorReset, load1Color, "Load 1", common.ColorReset, load5Color, "5", common.ColorReset, load15Color, "15", common.ColorReset, capacityTotalMemoryColor, "MemTot", common.ColorReset, capacityAllocatedMemoryColor, "MemAlloc", common.ColorReset, containerUsageMemoryColor, "MemUsd", common.ColorReset, CapacityTotalDiskColor, "DiskTot", common.ColorReset, containerUsageDiskColor, "DiskUsd", common.ColorReset, containerCountColor, "CntrCnt", common.ColorReset, IPTablesRuleCountColor, "IPTR", common.ColorReset, OverlayTxBytesColor, "OVTX", common.ColorReset, OverlayRxBytesColor, "OVRX", common.ColorReset, HTTPRouteCountColor, "HTTPRC", common.ColorReset, OverlayRxDroppedColor, "OVRXDrop", common.ColorReset, OverlayTxDroppedColor, "OVTXDrop", common.ColorReset, responsesColor, "TOT_RSP", common.ColorReset, r2xxColor, "2XX", common.ColorReset, r3xxColor, "3XX", common.ColorReset, r4xxColor, "4XX", common.ColorReset, r5xxColor, "5XX", common.ColorReset, AIELRLColor, "AIELRL", common.ColorReset, NzlIngrColor, "NzlIngr", common.ColorReset, NzlEgrColor, "NzlEgr", common.ColorReset, avgEnvlpsColor, "AvgEnvlp", common.ColorReset))
 
 		for _, pairlist := range sortedBy(CellMetricMap, common.ActiveSortDirection, activeSortField) {
+			lineCounter++
+			if lineCounter > maxY-7 {
+				//	don't render lines that don't fit on the screen
+				break
+			}
 			if passFilter(pairlist) {
 				alertColor(pairlist.Value)
 				_, _ = fmt.Fprintf(mainView, "%8s %13s %-14s %11s %7s %s%6s%s %s%6s%s %s%6s%s %7s %9s %6s %7s %7s %7s %5s %5s %5s %6s %8s %8s %7s %5s %5s %5s %5s %7s %7s %6s %8s\n",
@@ -299,11 +304,6 @@ func refreshViewContent(gui *gocui.Gui) {
 					util.GetFormattedUnit(pairlist.Value.Tags[metricNzlEgr]),
 					util.GetFormattedUnit(pairlist.Value.Tags[metricAvgEnvlps]),
 				)
-				lineCounter++
-				if lineCounter > maxY-7 {
-					//	don't render lines that don't fit on the screen
-					break
-				}
 			}
 		}
 	}
