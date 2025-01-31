@@ -265,11 +265,11 @@ func refreshViewContent(gui *gocui.Gui) {
 			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%12s%s %s%5s%s %s%9s%s %s%6s%s %s%9s%s %s%7s%s %s%6s%s %s%9s%s %s%7s%s %s%-14s%s %s%9s%s %s%9s%s %s%-25s%s %s%-35s%s\n",
 				appNameColor, "App/Index", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, common.AgeColor, "UpTime", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsd", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsd", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, common.IPColor, "IP", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(InstanceMetricMap, common.ActiveSortDirection, activeInstancesSortField) {
-				lineCounter++
-				if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
-					break
-				}
 				if passFilter(pairlist) {
+					lineCounter++
+					if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
+						break
+					}
 					_, _ = fmt.Fprintf(mainView, "%-50s %5s %12s %5s %9s %6s %9s %7s %6s %9s %7s %-14s %9s %9s %-25s %-35s%s\n",
 						fmt.Sprintf("%s/%s(%d)", util.TruncateString(pairlist.Value.AppName, 45),
 							pairlist.Value.AppIndex,

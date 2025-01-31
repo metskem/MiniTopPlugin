@@ -177,12 +177,12 @@ func refreshViewContent(gui *gocui.Gui) {
 		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
 			common.LastSeenColor, "LASTSEEN", common.ColorReset, routeColor, "Route", common.ColorReset, rTotColor, "Req Tot", common.ColorReset, rTotRateColor, "Req/s", common.ColorReset, respColor, "Resp(ms)", common.ColorReset, r2xxColor, "2xx", common.ColorReset, r3xxColor, "3xx", common.ColorReset, r4xxColor, "4xx", common.ColorReset, r5xxColor, "5xx", common.ColorReset, GETsColor, "GETs", common.ColorReset, PUTsColor, "PUTs", common.ColorReset, POSTsColor, "POSTs", common.ColorReset, DELETEsColor, "DELETEs", common.ColorReset))
 		for _, pairlist := range sortedBy(RouteMetricMap, common.ActiveSortDirection, activeSortField) {
-			lineCounter++
-			if lineCounter > maxY-7 {
-				//	don't render lines that don't fit on the screen
-				break
-			}
 			if passFilter(pairlist) {
+				lineCounter++
+				if lineCounter > maxY-7 {
+					//	don't render lines that don't fit on the screen
+					break
+				}
 				_, _ = fmt.Fprintf(mainView, "%8s %-60s %7s %5s %8s %5s %5s %5s %5s %5s %5s %5s %7s\n",
 					util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
 					util.TruncateString(pairlist.Value.Route, 60),
