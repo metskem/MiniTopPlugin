@@ -98,9 +98,12 @@ func (p PairList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 func passFilter(pairList Pair) bool {
 	filterPassed := true
-	filterRegex := regexp.MustCompile(common.FilterStrings[common.FilterFieldIP])
-	if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
-		filterPassed = false
+	if filterRegex, err := regexp.Compile(common.FilterStrings[common.FilterFieldIP]); err != nil {
+		util.WriteToFile(fmt.Sprintf("Error compiling client regex: %s", err))
+	} else {
+		if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
+			filterPassed = false
+		}
 	}
 	return filterPassed
 }

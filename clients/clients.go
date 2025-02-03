@@ -90,7 +90,7 @@ func layout(g *gocui.Gui) (err error) {
 			return err
 		}
 		v, _ := g.SetCurrentView("ClientView")
-		v.Title = "Clients"
+		v.Title = fmt.Sprintf("Clients (filter: IP=%s)", common.FilterStrings[common.FilterFieldIP])
 	}
 	if common.ShowFilter {
 		if _, err = g.SetView("FilterView", maxX/2-30, maxY/2, maxX/2+30, maxY/2+10, byte(0)); err != nil {
@@ -167,7 +167,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		common.MapLock.Lock()
 		defer common.MapLock.Unlock()
 		lineCounter := 0
-		mainView.Title = "Clients"
+		mainView.Title = fmt.Sprintf("Clients (filter: IP=%s)", common.FilterStrings[common.FilterFieldIP])
 		// calculate the rates per second by subtracting the previous values
 		for k, v := range ClientMetricMap {
 			v.RTotRate = v.RTotal - ClientMetricMapPrevious[k].RTotal
