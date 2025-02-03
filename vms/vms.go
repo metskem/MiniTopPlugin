@@ -133,6 +133,7 @@ func resetFilters(g *gocui.Gui, v *gocui.View) error {
 	_ = g // get rid of compiler warning
 	_ = v // get rid of compiler warning
 	common.FilterStrings[common.FilterFieldIP] = ""
+	common.FilterStrings[common.FilterFieldJob] = ""
 	return nil
 }
 
@@ -165,7 +166,7 @@ func layout(g *gocui.Gui) (err error) {
 			return err
 		}
 		v, _ := g.SetCurrentView("VMView")
-		v.Title = "VMs"
+		v.Title = "VMs (filter: IP=" + common.FilterStrings[common.FilterFieldIP] + ", Job=" + common.FilterStrings[common.FilterFieldJob] + ")"
 	}
 	if common.ShowFilter {
 		if _, err = g.SetView("FilterView", maxX/2-30, maxY/2, maxX/2+30, maxY/2+10, byte(0)); err != nil {
@@ -264,7 +265,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		common.MapLock.Lock()
 		defer common.MapLock.Unlock()
 		lineCounter := 0
-		mainView.Title = "VMs"
+		mainView.Title = "VMs (filter: IP=" + common.FilterStrings[common.FilterFieldIP] + ", Job=" + common.FilterStrings[common.FilterFieldJob] + ")"
 		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%13s%s %s%-14s%s %s%13s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
 			common.LastSeenColor, "LASTSEEN", common.ColorReset, JobColor, "Job", common.ColorReset, common.IPColor, "IP", common.ColorReset, upTimeColor, "UpTime", common.ColorReset, numCPUSColor, "NumCPU", common.ColorReset, load1Color, "Load 1", common.ColorReset, load5Color, "5", common.ColorReset, load15Color, "15", common.ColorReset, capacityTotalMemoryColor, "MemTot", common.ColorReset, capacityAllocatedMemoryColor, "MemAlloc", common.ColorReset, containerUsageMemoryColor, "MemUsd", common.ColorReset, CapacityTotalDiskColor, "DiskTot", common.ColorReset, containerUsageDiskColor, "DiskUsd", common.ColorReset, containerCountColor, "CntrCnt", common.ColorReset, IPTablesRuleCountColor, "IPTR", common.ColorReset, OverlayTxBytesColor, "OVTX", common.ColorReset, OverlayRxBytesColor, "OVRX", common.ColorReset, HTTPRouteCountColor, "HTTPRC", common.ColorReset, OverlayRxDroppedColor, "OVRXDrop", common.ColorReset, OverlayTxDroppedColor, "OVTXDrop", common.ColorReset, responsesColor, "TOT_RSP", common.ColorReset, r2xxColor, "2XX", common.ColorReset, r3xxColor, "3XX", common.ColorReset, r4xxColor, "4XX", common.ColorReset, r5xxColor, "5XX", common.ColorReset, AIELRLColor, "AIELRL", common.ColorReset, NzlIngrColor, "NzlIngr", common.ColorReset, NzlEgrColor, "NzlEgr", common.ColorReset, avgEnvlpsColor, "AvgEnvlp", common.ColorReset))
 
