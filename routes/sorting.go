@@ -102,9 +102,13 @@ func (p PairList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 func passFilter(pairList Pair) bool {
 	filterPassed := true
-	filterRegex := regexp.MustCompile(common.FilterStrings[common.FilterFieldRoute])
-	if !(common.FilterStrings[common.FilterFieldRoute] == "") && !filterRegex.MatchString(pairList.Value.Route) {
-		filterPassed = false
+	if filterRegex, err := regexp.Compile(common.FilterStrings[common.FilterFieldRoute]); err != nil {
+		util.WriteToFile(fmt.Sprintf("Error compiling routes regex: %v", err))
+		common.FilterStrings[common.FilterFieldRoute] = ""
+	} else {
+		if !(common.FilterStrings[common.FilterFieldRoute] == "") && !filterRegex.MatchString(pairList.Value.Route) {
+			filterPassed = false
+		}
 	}
 	return filterPassed
 }

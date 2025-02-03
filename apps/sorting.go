@@ -1,8 +1,10 @@
 package apps
 
 import (
+	"fmt"
 	"github.com/awesome-gocui/gocui"
 	"github.com/metskem/rommel/MiniTopPlugin/common"
+	"github.com/metskem/rommel/MiniTopPlugin/util"
 	"regexp"
 	"sort"
 )
@@ -269,21 +271,37 @@ func (p PairList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 func passFilter(pairList Pair) bool {
 	filterPassed := true
-	filterRegex := regexp.MustCompile(common.FilterStrings[common.FilterFieldAppName])
-	if !(common.FilterStrings[common.FilterFieldAppName] == "") && !filterRegex.MatchString(pairList.Value.AppName) {
-		filterPassed = false
-	}
-	filterRegex = regexp.MustCompile(common.FilterStrings[common.FilterFieldSpace])
-	if !(common.FilterStrings[common.FilterFieldSpace] == "") && !filterRegex.MatchString(pairList.Value.SpaceName) {
-		filterPassed = false
-	}
-	filterRegex = regexp.MustCompile(common.FilterStrings[common.FilterFieldOrg])
-	if !(common.FilterStrings[common.FilterFieldOrg] == "") && !filterRegex.MatchString(pairList.Value.OrgName) {
-		filterPassed = false
-	}
-	filterRegex = regexp.MustCompile(common.FilterStrings[common.FilterFieldIP])
-	if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
-		filterPassed = false
+	if filterRegex, err := regexp.Compile(common.FilterStrings[common.FilterFieldAppName]); err != nil {
+		util.WriteToFile(fmt.Sprintf("Error compiling apps regex: %v", err))
+		common.FilterStrings[common.FilterFieldAppName] = ""
+	} else {
+		if !(common.FilterStrings[common.FilterFieldAppName] == "") && !filterRegex.MatchString(pairList.Value.AppName) {
+			filterPassed = false
+		}
+		if filterRegex, err = regexp.Compile(common.FilterStrings[common.FilterFieldSpace]); err != nil {
+			util.WriteToFile(fmt.Sprintf("Error compiling space regex: %v", err))
+			common.FilterStrings[common.FilterFieldSpace] = ""
+		} else {
+			if !(common.FilterStrings[common.FilterFieldSpace] == "") && !filterRegex.MatchString(pairList.Value.SpaceName) {
+				filterPassed = false
+			}
+			if filterRegex, err = regexp.Compile(common.FilterStrings[common.FilterFieldOrg]); err != nil {
+				util.WriteToFile(fmt.Sprintf("Error compiling org regex: %v", err))
+				common.FilterStrings[common.FilterFieldOrg] = ""
+			} else {
+				if !(common.FilterStrings[common.FilterFieldOrg] == "") && !filterRegex.MatchString(pairList.Value.OrgName) {
+					filterPassed = false
+				}
+				if filterRegex, err = regexp.Compile(common.FilterStrings[common.FilterFieldIP]); err != nil {
+					util.WriteToFile(fmt.Sprintf("Error compiling IP regex: %v", err))
+					common.FilterStrings[common.FilterFieldIP] = ""
+				} else {
+					if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
+						filterPassed = false
+					}
+				}
+			}
+		}
 	}
 	return filterPassed
 }

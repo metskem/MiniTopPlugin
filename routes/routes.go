@@ -91,7 +91,7 @@ func layout(g *gocui.Gui) (err error) {
 			return err
 		}
 		v, _ := g.SetCurrentView("RouteView")
-		v.Title = "Routes"
+		v.Title = fmt.Sprintf("Routes (filter: %s)", common.FilterStrings[common.FilterFieldRoute])
 	}
 	if common.ShowFilter {
 		if _, err = g.SetView("FilterView", maxX/2-30, maxY/2, maxX/2+30, maxY/2+10, byte(0)); err != nil {
@@ -168,7 +168,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		common.MapLock.Lock()
 		defer common.MapLock.Unlock()
 		lineCounter := 0
-		mainView.Title = "Routes"
+		mainView.Title = fmt.Sprintf("Routes (filter: %s)", common.FilterStrings[common.FilterFieldRoute])
 		// calculate the rates per second by subtracting the previous values
 		for k, v := range RouteMetricMap {
 			v.RTotRate = v.RTotal - RouteMetricMapPrevious[k].RTotal
@@ -177,7 +177,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%-60s%s %s%7s%s %s%5s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s\n",
 			common.LastSeenColor, "LASTSEEN", common.ColorReset, routeColor, "Route", common.ColorReset, rTotColor, "Req Tot", common.ColorReset, rTotRateColor, "Req/s", common.ColorReset, respColor, "Resp(ms)", common.ColorReset, r2xxColor, "2xx", common.ColorReset, r3xxColor, "3xx", common.ColorReset, r4xxColor, "4xx", common.ColorReset, r5xxColor, "5xx", common.ColorReset, GETsColor, "GETs", common.ColorReset, PUTsColor, "PUTs", common.ColorReset, POSTsColor, "POSTs", common.ColorReset, DELETEsColor, "DELETEs", common.ColorReset))
 		for _, pairlist := range sortedBy(RouteMetricMap, common.ActiveSortDirection, activeSortField) {
-			if passFilter(pairlist) {
+			if !common.ShowFilter && passFilter(pairlist) {
 				lineCounter++
 				if lineCounter > maxY-7 {
 					//	don't render lines that don't fit on the screen

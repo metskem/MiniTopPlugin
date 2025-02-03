@@ -266,13 +266,21 @@ func (p PairList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 func passFilter(pairList Pair) bool {
 	filterPassed := true
-	filterRegex := regexp.MustCompile(common.FilterStrings[common.FilterFieldIP])
-	if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
-		filterPassed = false
-	}
-	filterRegex = regexp.MustCompile(common.FilterStrings[common.FilterFieldJob])
-	if !(common.FilterStrings[common.FilterFieldJob] == "") && !filterRegex.MatchString(pairList.Value.Job) {
-		filterPassed = false
+	if filterRegex, err := regexp.Compile(common.FilterStrings[common.FilterFieldIP]); err != nil {
+		util.WriteToFile(fmt.Sprintf("Error compiling IPs regex: %v", err))
+		common.FilterStrings[common.FilterFieldIP] = ""
+	} else {
+		if !(common.FilterStrings[common.FilterFieldIP] == "") && !filterRegex.MatchString(pairList.Value.IP) {
+			filterPassed = false
+		}
+		if filterRegex, err = regexp.Compile(common.FilterStrings[common.FilterFieldJob]); err != nil {
+			util.WriteToFile(fmt.Sprintf("Error compiling job regex: %v", err))
+			common.FilterStrings[common.FilterFieldJob] = ""
+		} else {
+			if !(common.FilterStrings[common.FilterFieldJob] == "") && !filterRegex.MatchString(pairList.Value.Job) {
+				filterPassed = false
+			}
+		}
 	}
 	oneTagValueFound := false
 	for _, value := range pairList.Value.Tags {

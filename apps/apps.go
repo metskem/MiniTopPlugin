@@ -136,6 +136,7 @@ func resetFilters(g *gocui.Gui, v *gocui.View) error {
 	common.FilterStrings[common.FilterFieldAppName] = ""
 	common.FilterStrings[common.FilterFieldOrg] = ""
 	common.FilterStrings[common.FilterFieldSpace] = ""
+	common.FilterStrings[common.FilterFieldIP] = ""
 	return nil
 }
 
@@ -167,7 +168,7 @@ func layout(g *gocui.Gui) (err error) {
 			return err
 		}
 		v, _ := g.SetCurrentView("ApplicationView")
-		v.Title = "Application Instances"
+		v.Title = fmt.Sprintf("Application Instances (filters: appname=%s, org=%s, space=%s, IP=%s)", common.FilterStrings[common.FilterFieldAppName], common.FilterStrings[common.FilterFieldOrg], common.FilterStrings[common.FilterFieldSpace], common.FilterStrings[common.FilterFieldIP])
 	}
 	if common.ShowFilter {
 		if _, err = g.SetView("FilterView", maxX/2-30, maxY/2, maxX/2+30, maxY/2+10, byte(0)); err != nil {
@@ -177,17 +178,29 @@ func layout(g *gocui.Gui) (err error) {
 			v, _ := g.SetCurrentView("FilterView")
 			v.Title = "Filter"
 			_, _ = fmt.Fprint(v, "Filter by (regular expression)")
-			if activeAppsSortField == sortByAppName || activeInstancesSortField == sortByAppName {
-				_, _ = fmt.Fprintln(v, " AppName")
-				_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldAppName])
+			if common.ActiveView == common.AppView {
+				if activeAppsSortField == sortByAppName {
+					_, _ = fmt.Fprintln(v, " AppName")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldAppName])
+				} else if activeAppsSortField == sortBySpace {
+					_, _ = fmt.Fprintln(v, " Space")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldSpace])
+				} else if activeAppsSortField == sortByOrg {
+					_, _ = fmt.Fprintln(v, " Org")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldOrg])
+				}
 			}
-			if activeAppsSortField == sortBySpace || activeInstancesSortField == sortBySpace {
-				_, _ = fmt.Fprintln(v, " Space")
-				_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldSpace])
-			}
-			if activeAppsSortField == sortByOrg || activeInstancesSortField == sortByOrg {
-				_, _ = fmt.Fprintln(v, " Org")
-				_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldOrg])
+			if common.ActiveView == common.AppInstanceView {
+				if activeInstancesSortField == sortByAppName {
+					_, _ = fmt.Fprintln(v, " AppName")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldAppName])
+				} else if activeInstancesSortField == sortBySpace {
+					_, _ = fmt.Fprintln(v, " Space")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldSpace])
+				} else if activeInstancesSortField == sortByOrg {
+					_, _ = fmt.Fprintln(v, " Org")
+					_, _ = fmt.Fprintln(v, common.FilterStrings[common.FilterFieldOrg])
+				}
 			}
 		}
 	}
@@ -261,7 +274,8 @@ func refreshViewContent(gui *gocui.Gui) {
 		defer common.MapLock.Unlock()
 		lineCounter := 0
 		if common.ActiveView == common.AppInstanceView {
-			mainView.Title = "Application Instances"
+			//mainView.Title = "Application Instances"
+			mainView.Title = fmt.Sprintf("Application Instances (filters: appname=%s, org=%s, space=%s, IP=%s)", common.FilterStrings[common.FilterFieldAppName], common.FilterStrings[common.FilterFieldOrg], common.FilterStrings[common.FilterFieldSpace], common.FilterStrings[common.FilterFieldIP])
 			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%12s%s %s%5s%s %s%9s%s %s%6s%s %s%9s%s %s%7s%s %s%6s%s %s%9s%s %s%7s%s %s%-14s%s %s%9s%s %s%9s%s %s%-25s%s %s%-35s%s\n",
 				appNameColor, "App/Index", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, common.AgeColor, "UpTime", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsd", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsd", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, common.IPColor, "IP", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(InstanceMetricMap, common.ActiveSortDirection, activeInstancesSortField) {
@@ -294,7 +308,7 @@ func refreshViewContent(gui *gocui.Gui) {
 		}
 
 		if common.ActiveView == common.AppView {
-			mainView.Title = "Applications"
+			mainView.Title = fmt.Sprintf("Applications (filters: appname=%s, org=%s, space=%s, IP=%s)", common.FilterStrings[common.FilterFieldAppName], common.FilterStrings[common.FilterFieldOrg], common.FilterStrings[common.FilterFieldSpace], common.FilterStrings[common.FilterFieldIP])
 			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%3s%s %s%4s%s %s%7s%s %s%8s%s %s%9s%s %s%8s%s %s%5s%s %s%9s%s %s%8s%s %s%7s%s %s%8s%s %s%-25s%s %s%-35s%s\n",
 				appNameColor, "App", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, ixColor, "Ix", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsed", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsed", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(AppMetricMap, common.ActiveSortDirection, activeAppsSortField) {
@@ -327,53 +341,106 @@ func refreshViewContent(gui *gocui.Gui) {
 
 func mkEvtHandler(ch rune) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		if activeInstancesSortField == sortByAppName || activeAppsSortField == sortByAppName {
-			if ch == rune(gocui.KeyBackspace) {
-				if len(common.FilterStrings[common.FilterFieldAppName]) > 0 {
-					common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName][:len(common.FilterStrings[common.FilterFieldAppName])-1]
-					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldAppName])+1, 1)
-					v.EditDelete(true)
+		if common.ActiveView == common.AppView {
+			if activeAppsSortField == sortByAppName {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldAppName]) > 0 {
+						common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName][:len(common.FilterStrings[common.FilterFieldAppName])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldAppName])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName] + string(ch)
 				}
-				return nil
-			} else {
-				_, _ = fmt.Fprint(v, string(ch))
-				common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName] + string(ch)
+			} else if activeAppsSortField == sortBySpace {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldSpace]) > 0 {
+						common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace][:len(common.FilterStrings[common.FilterFieldSpace])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldSpace])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace] + string(ch)
+				}
+			} else if activeAppsSortField == sortByOrg {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldOrg]) > 0 {
+						common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg][:len(common.FilterStrings[common.FilterFieldOrg])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldOrg])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg] + string(ch)
+				}
+			} else if activeAppsSortField == sortByIP {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldIP]) > 0 {
+						common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP][:len(common.FilterStrings[common.FilterFieldIP])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldIP])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP] + string(ch)
+				}
 			}
-		} else if activeInstancesSortField == sortBySpace || activeAppsSortField == sortBySpace {
-			if ch == rune(gocui.KeyBackspace) {
-				if len(common.FilterStrings[common.FilterFieldSpace]) > 0 {
-					common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace][:len(common.FilterStrings[common.FilterFieldSpace])-1]
-					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldSpace])+1, 1)
-					v.EditDelete(true)
+		}
+		if common.ActiveView == common.AppInstanceView {
+			if activeInstancesSortField == sortByAppName {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldAppName]) > 0 {
+						common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName][:len(common.FilterStrings[common.FilterFieldAppName])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldAppName])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldAppName] = common.FilterStrings[common.FilterFieldAppName] + string(ch)
 				}
-				return nil
-			} else {
-				_, _ = fmt.Fprint(v, string(ch))
-				common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace] + string(ch)
-			}
-		} else if activeInstancesSortField == sortByOrg || activeAppsSortField == sortByOrg {
-			if ch == rune(gocui.KeyBackspace) {
-				if len(common.FilterStrings[common.FilterFieldOrg]) > 0 {
-					common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg][:len(common.FilterStrings[common.FilterFieldOrg])-1]
-					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldOrg])+1, 1)
-					v.EditDelete(true)
+			} else if activeInstancesSortField == sortBySpace {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldSpace]) > 0 {
+						common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace][:len(common.FilterStrings[common.FilterFieldSpace])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldSpace])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldSpace] = common.FilterStrings[common.FilterFieldSpace] + string(ch)
 				}
-				return nil
-			} else {
-				_, _ = fmt.Fprint(v, string(ch))
-				common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg] + string(ch)
-			}
-		} else if activeInstancesSortField == sortByIP || activeAppsSortField == sortByIP {
-			if ch == rune(gocui.KeyBackspace) {
-				if len(common.FilterStrings[common.FilterFieldIP]) > 0 {
-					common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP][:len(common.FilterStrings[common.FilterFieldIP])-1]
-					_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldIP])+1, 1)
-					v.EditDelete(true)
+			} else if activeInstancesSortField == sortByOrg {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldOrg]) > 0 {
+						common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg][:len(common.FilterStrings[common.FilterFieldOrg])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldOrg])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldOrg] = common.FilterStrings[common.FilterFieldOrg] + string(ch)
 				}
-				return nil
-			} else {
-				_, _ = fmt.Fprint(v, string(ch))
-				common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP] + string(ch)
+			} else if activeInstancesSortField == sortByIP {
+				if ch == rune(gocui.KeyBackspace) {
+					if len(common.FilterStrings[common.FilterFieldIP]) > 0 {
+						common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP][:len(common.FilterStrings[common.FilterFieldIP])-1]
+						_ = v.SetCursor(len(common.FilterStrings[common.FilterFieldIP])+1, 1)
+						v.EditDelete(true)
+					}
+					return nil
+				} else {
+					_, _ = fmt.Fprint(v, string(ch))
+					common.FilterStrings[common.FilterFieldIP] = common.FilterStrings[common.FilterFieldIP] + string(ch)
+				}
 			}
 		}
 		return nil
