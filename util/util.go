@@ -3,7 +3,7 @@ package util
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/metskem/rommel/MiniTopPlugin/conf"
+	"github.com/metskem/MiniTopPlugin/conf"
 	"os"
 	"time"
 )

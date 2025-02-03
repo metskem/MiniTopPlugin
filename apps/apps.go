@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/awesome-gocui/gocui"
-	"github.com/metskem/rommel/MiniTopPlugin/common"
-	"github.com/metskem/rommel/MiniTopPlugin/conf"
-	"github.com/metskem/rommel/MiniTopPlugin/util"
+	"github.com/metskem/MiniTopPlugin/common"
+	"github.com/metskem/MiniTopPlugin/conf"
+	"github.com/metskem/MiniTopPlugin/util"
 	"time"
 )
 

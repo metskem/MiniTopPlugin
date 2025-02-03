@@ -6,7 +6,7 @@ import (
 	"code.cloudfoundry.org/cli/plugin"
 	"code.cloudfoundry.org/cli/util/configv3"
 	"fmt"
-	"github.com/metskem/rommel/MiniTopPlugin/version"
+	"github.com/metskem/MiniTopPlugin/version"
 	"os"
 )
 

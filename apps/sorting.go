@@ -3,8 +3,8 @@ package apps
 import (
 	"fmt"
 	"github.com/awesome-gocui/gocui"
-	"github.com/metskem/rommel/MiniTopPlugin/common"
-	"github.com/metskem/rommel/MiniTopPlugin/util"
+	"github.com/metskem/MiniTopPlugin/common"
+	"github.com/metskem/MiniTopPlugin/util"
 	"regexp"
 	"sort"
 )

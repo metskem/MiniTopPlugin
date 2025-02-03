@@ -1,8 +1,8 @@
-module github.com/metskem/rommel/MiniTopPlugin
+module github.com/metskem/MiniTopPlugin
 
 go 1.23
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250124145028-65684f501c47
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250127172529-29210b9bc287
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
@@ -10,12 +10,11 @@ require (
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/integrii/flaggy v1.5.2
-	github.com/prometheus/client_model v0.6.1
 	github.com/prometheus/common v0.62.0
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.26.0 // indirect
+	code.cloudfoundry.org/bytefmt v0.27.0 // indirect
 	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250119173906-56f7aa3f709f // indirect
 	code.cloudfoundry.org/go-diodes v0.0.0-20250120125122-6d632ec80998 // indirect
 	code.cloudfoundry.org/go-log-cache v1.0.0 // indirect
@@ -31,10 +30,10 @@ require (
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f // indirect
 	github.com/charlievieth/fs v0.0.3 // indirect
 	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
-	github.com/cloudfoundry/bosh-utils v0.0.524 // indirect
+	github.com/cloudfoundry/bosh-utils v0.0.525 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/creack/pty v1.1.24 // indirect
-	github.com/cyphar/filepath-securejoin v0.4.0 // indirect
+	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/gdamore/tcell/v2 v2.8.1 // indirect
@@ -51,6 +50,7 @@ require (
 	github.com/moby/moby v20.10.27+incompatible // indirect
 	github.com/moby/term v0.5.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
@@ -62,8 +62,8 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250124145028-65684f501c47 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250124145028-65684f501c47 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250127172529-29210b9bc287 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250127172529-29210b9bc287 // indirect
 	google.golang.org/grpc v1.70.0 // indirect
 	google.golang.org/protobuf v1.36.4 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
