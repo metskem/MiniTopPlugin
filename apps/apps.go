@@ -312,11 +312,11 @@ func refreshViewContent(gui *gocui.Gui) {
 			_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%-47s%s %s%8s%s %s%3s%s %s%4s%s %s%7s%s %s%8s%s %s%9s%s %s%8s%s %s%5s%s %s%9s%s %s%8s%s %s%7s%s %s%8s%s %s%-25s%s %s%-35s%s\n",
 				appNameColor, "App", common.ColorReset, common.LastSeenColor, "LastSeen", common.ColorReset, ixColor, "Ix", common.ColorReset, cpuPercColor, "Cpu%", common.ColorReset, cpuTotColor, "CpuTot", common.ColorReset, memoryColor, "MemUsed", common.ColorReset, memoryLimitColor, "MemQuota", common.ColorReset, diskColor, "DiskUsed", common.ColorReset, logRateColor, "LogRt", common.ColorReset, logRateLimitColor, "LogRtLim", common.ColorReset, entColor, "CpuEnt", common.ColorReset, logRepColor, "LogRep", common.ColorReset, logRtrColor, "LogRtr", common.ColorReset, orgColor, "Org", common.ColorReset, spaceColor, "Space", common.ColorReset))
 			for _, pairlist := range sortedBy(AppMetricMap, common.ActiveSortDirection, activeAppsSortField) {
-				lineCounter++
-				if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
-					break
-				}
 				if passFilter(pairlist) {
+					lineCounter++
+					if lineCounter > maxY-7 { //	don't render lines that don't fit on the screen
+						break
+					}
 					_, _ = fmt.Fprintf(mainView, "%-50s %5s %3d %4s %7s %8s %9s %8s %5s %9s %8s %7s %8s %-25s %-35s\n",
 						fmt.Sprintf("%s", util.TruncateString(pairlist.Value.AppName, 45)),
 						util.GetFormattedElapsedTime(float64(time.Since(pairlist.Value.LastSeen).Nanoseconds())),
