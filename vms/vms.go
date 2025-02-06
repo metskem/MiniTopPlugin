@@ -245,6 +245,9 @@ func refreshViewContent(gui *gocui.Gui) {
 	util.WriteToFileDebug("refreshViewContent VMView")
 	_, maxY := gui.Size()
 
+	common.MapLock.Lock()
+	defer common.MapLock.Unlock()
+
 	if summaryView != nil {
 		summaryView.Clear()
 		_, _ = fmt.Fprintf(summaryView, "Target: %s, Nozzle Uptime: %s, Total envelopes: %s (%s/s)\n"+
@@ -262,8 +265,6 @@ func refreshViewContent(gui *gocui.Gui) {
 	}
 	if mainView != nil {
 		mainView.Clear()
-		common.MapLock.Lock()
-		defer common.MapLock.Unlock()
 		lineCounter := 0
 		mainView.Title = "VMs (filter: IP=" + common.FilterStrings[common.FilterFieldIP] + ", Job=" + common.FilterStrings[common.FilterFieldJob] + ")"
 		_, _ = fmt.Fprint(mainView, fmt.Sprintf("%s%8s%s %s%13s%s %s%-14s%s %s%13s%s %s%7s%s %s%6s%s %s%6s%s %s%6s%s %s%7s%s %s%9s%s %s%6s%s %s%7s%s %s%7s%s %s%7s%s %s%5s%s %s%5s%s %s%5s%s %s%6s%s %s%8s%s %s%8s%s %s%6s%s %s%5s%s %s%5s%s %s%5s%s %s%5s%s %s%7s%s %s%7s%s %s%6s%s %s%8s%s\n",
@@ -417,6 +418,9 @@ func CollectNodeExporterMetrics() {
 		cellMetric.NodeLoad1 = exporter.CPULoad1
 		cellMetric.NodeLoad5 = exporter.CPULoad5
 		cellMetric.NodeLoad15 = exporter.CPULoad15
+		if cellMetric.Tags == nil {
+			cellMetric.Tags = make(map[string]float64)
+		}
 		cellMetric.Tags[metricNumCPUS] = float64(exporter.NumCPUs)
 		cellMetric.Tags[metricUpTime] = exporter.UpTime
 		CellMetricMap[exporter.IP] = cellMetric

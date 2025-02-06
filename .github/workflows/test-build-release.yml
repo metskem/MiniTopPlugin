@@ -26,6 +26,7 @@ jobs:
       - name: Build MiniTopPlugin
         env:
           COMMIT: ${{ github.sha }}
+          VERSION: ${{ env.VERSION }}
         run: .github/scripts/build.sh
       - name: upload MiniTopPlugin
         uses: actions/upload-artifact@v4
