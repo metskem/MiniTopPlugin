@@ -7,6 +7,7 @@ import (
 	"github.com/metskem/MiniTopPlugin/util"
 	"regexp"
 	"sort"
+	"strings"
 )
 
 const (
@@ -72,7 +73,7 @@ func (p PairList) Less(i, j int) bool {
 	case sortByLastSeen:
 		return p[i].Value.LastSeen.Unix() < p[j].Value.LastSeen.Unix()
 	case sortByRoute:
-		return p[i].Value.Route < p[j].Value.Route
+		return strings.ToLower(p[i].Value.Route) < strings.ToLower(p[j].Value.Route)
 	case sortByRTot:
 		return p[i].Value.RTotal < p[j].Value.RTotal
 	case sortByRTotRate:

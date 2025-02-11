@@ -7,6 +7,7 @@ import (
 	"github.com/metskem/MiniTopPlugin/util"
 	"regexp"
 	"sort"
+	"strings"
 )
 
 var (
@@ -231,7 +232,7 @@ func (p PairList) Len() int { return len(p) }
 func (p PairList) Less(i, j int) bool {
 	switch p[i].SortBy {
 	case sortByAppName:
-		return p[i].Value.AppName < p[j].Value.AppName
+		return strings.ToLower(p[i].Value.AppName) < strings.ToLower(p[j].Value.AppName)
 	case sortByLastSeen:
 		return p[i].Value.LastSeen.Unix() < p[j].Value.LastSeen.Unix()
 	case sortByAge:
@@ -259,9 +260,9 @@ func (p PairList) Less(i, j int) bool {
 	case sortByLogRtr:
 		return p[i].Value.LogRtr < p[j].Value.LogRtr
 	case sortByOrg:
-		return p[i].Value.OrgName < p[j].Value.OrgName
+		return strings.ToLower(p[i].Value.OrgName) < strings.ToLower(p[j].Value.OrgName)
 	case sortBySpace:
-		return p[i].Value.SpaceName < p[j].Value.SpaceName
+		return strings.ToLower(p[i].Value.SpaceName) < strings.ToLower(p[j].Value.SpaceName)
 	case sortByIx:
 		return p[i].Value.IxCount < p[j].Value.IxCount
 	}
