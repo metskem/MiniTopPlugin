@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"code.cloudfoundry.org/cli/plugin"
 	"code.cloudfoundry.org/go-loggregator/v10"
 	"code.cloudfoundry.org/go-loggregator/v10/rpc/loggregator_v2"
@@ -20,6 +21,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -55,12 +57,12 @@ func startMT(cliConnection plugin.CliConnection) {
 
 	rlpCtx := context.TODO()
 
-	tokenAttacher := NewTokenAttacher(cliConnection)
+	tokenAttacher := NewTokenAttacher()
 
 	go func() {
 		for err := range errorChan {
 			util.WriteToFile(fmt.Sprintf("from errorChannel: %s\n", err.Error()))
-			tokenAttacher.refreshToken(cliConnection) // the most common reason for errors is that the token has expired
+			tokenAttacher.refreshToken() // the most common reason for errors is that the token has expired
 		}
 	}()
 
@@ -391,25 +393,28 @@ func startCui() {
 	}
 }
 
-func NewTokenAttacher(cliConnection plugin.CliConnection) *TokenAttacher {
-	ta := &TokenAttacher{cliConnection: cliConnection}
-	ta.refreshToken(cliConnection)
+func NewTokenAttacher() *TokenAttacher {
+	ta := &TokenAttacher{}
+	ta.refreshToken()
 	return ta
 }
 
 type TokenAttacher struct {
-	token         string
-	calls         int
-	cliConnection plugin.CliConnection
+	token string
+	calls int
 }
 
-func (ta *TokenAttacher) refreshToken(cliConnection plugin.CliConnection) {
-	if oauthToken, err := cliConnection.CliCommandWithoutTerminalOutput("oauth-token"); err != nil {
-		util.WriteToFile(fmt.Sprintf("oauth-token failed : %s)", err))
+func (ta *TokenAttacher) refreshToken() {
+	// You normally would use cliConnection.CliCommand, but that screws up my "NetworkPolicyV1Endpoint" in my cf config.json. So instead issue os command:
+	cmd := exec.Command("cf", "oauth-token")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("oauth-token failed : %s", err)
 	} else {
-		token := strings.Fields(oauthToken[0])[1]
-		ta.token = token
-		util.WriteToFileDebug(fmt.Sprintf("oauth token refreshed: %s", token[len(token)-10:]))
+		ta.token = strings.ReplaceAll(strings.Split(stdout.String(), " ")[1], "\n", "")
+		util.WriteToFileDebug(fmt.Sprintf("oauth token refreshed: %s", ta.token[len(ta.token)-10:]))
 	}
 }
 
@@ -417,7 +422,7 @@ func (ta *TokenAttacher) refreshToken(cliConnection plugin.CliConnection) {
 func (ta *TokenAttacher) Do(req *http.Request) (*http.Response, error) {
 	ta.calls++
 	if !util.IsTokenValid(ta.token) {
-		ta.refreshToken(ta.cliConnection)
+		ta.refreshToken()
 	}
 	util.WriteToFileDebug(fmt.Sprintf("TokenAttacher.Do called %d times, token: %s", ta.calls, ta.token[len(ta.token)-10:]))
 	req.Header.Set("Authorization", ta.token)
