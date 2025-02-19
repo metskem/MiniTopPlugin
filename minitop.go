@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"code.cloudfoundry.org/cli/plugin"
 	"code.cloudfoundry.org/go-loggregator/v10"
 	"code.cloudfoundry.org/go-loggregator/v10/rpc/loggregator_v2"
@@ -21,7 +20,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -57,12 +55,12 @@ func startMT(cliConnection plugin.CliConnection) {
 
 	rlpCtx := context.TODO()
 
-	tokenAttacher := NewTokenAttacher()
+	tokenAttacher := NewTokenAttacher(cliConnection)
 
 	go func() {
 		for err := range errorChan {
 			util.WriteToFile(fmt.Sprintf("from errorChannel: %s\n", err.Error()))
-			tokenAttacher.refreshToken() // the most common reason for errors is that the token has expired
+			//tokenAttacher.refreshToken() // the most common reason for errors is that the token has expired
 		}
 	}()
 
@@ -393,27 +391,24 @@ func startCui() {
 	}
 }
 
-func NewTokenAttacher() *TokenAttacher {
+func NewTokenAttacher(cliConnection plugin.CliConnection) *TokenAttacher {
 	ta := &TokenAttacher{}
-	ta.refreshToken()
+	ta.token, _ = cliConnection.AccessToken()
+	ta.cliConnection = cliConnection
 	return ta
 }
 
 type TokenAttacher struct {
-	token string
-	calls int
+	token         string
+	calls         int
+	cliConnection plugin.CliConnection
 }
 
 func (ta *TokenAttacher) refreshToken() {
-	// You normally would use cliConnection.CliCommand, but that screws up my "NetworkPolicyV1Endpoint" in my cf config.json. So instead issue os command:
-	cmd := exec.Command("cf", "oauth-token")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		fmt.Printf("oauth-token failed : %s", err)
+	if token, err := ta.cliConnection.AccessToken(); err != nil {
+		util.WriteToFile(fmt.Sprintf("cli AccessToken failed : %s", err))
 	} else {
-		ta.token = strings.ReplaceAll(strings.Split(stdout.String(), " ")[1], "\n", "")
+		ta.token = token
 		util.WriteToFileDebug(fmt.Sprintf("oauth token refreshed: %s", ta.token[len(ta.token)-10:]))
 	}
 }
@@ -421,7 +416,7 @@ func (ta *TokenAttacher) refreshToken() {
 // Do - attach the token to the request, called once a minute
 func (ta *TokenAttacher) Do(req *http.Request) (*http.Response, error) {
 	ta.calls++
-	if !util.IsTokenValid(ta.token) {
+	if !util.IsTokenValid(strings.Split(ta.token, " ")[1]) {
 		ta.refreshToken()
 	}
 	util.WriteToFileDebug(fmt.Sprintf("TokenAttacher.Do called %d times, token: %s", ta.calls, ta.token[len(ta.token)-10:]))
