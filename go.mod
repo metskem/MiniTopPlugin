@@ -2,10 +2,7 @@ module github.com/metskem/MiniTopPlugin
 
 go 1.23
 
-replace (
-	code.cloudfoundry.org/cli => github.com/metskem/cli v7.1.1+incompatible
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250212204824-5a70512c5d8b
-)
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250212204824-5a70512c5d8b
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
