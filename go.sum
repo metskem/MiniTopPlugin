@@ -398,6 +398,8 @@ github.com/cloudfoundry/bosh-cli v6.4.1+incompatible h1:n5/+NIF9QxvGINOrjh6DmO+G
 github.com/cloudfoundry/bosh-cli v6.4.1+incompatible/go.mod h1:rzIB+e1sn7wQL/TJ54bl/FemPKRhXby5BIMS3tLuWFM=
 github.com/cloudfoundry/bosh-utils v0.0.530 h1:aWZ386POSe3MNgCfvvg5dSZg5bWmZ3mShWqYwKv10ok=
 github.com/cloudfoundry/bosh-utils v0.0.530/go.mod h1:eCpeIN+9V0ERqmDDzIj3189RyNxg7flZqqxe1d1pcvI=
+github.com/cloudfoundry/bosh-utils v0.0.531 h1:jSETT0urNvCRJv+WR+QA7Lz5N67uNUvW9bJ+MXmF4es=
+github.com/cloudfoundry/bosh-utils v0.0.531/go.mod h1:S1rhUuu7mTCy1W8EwzbMfWcfUr4q0gSbLQ2RHUbP9Rc=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20200629203442-efcf912fb354/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
