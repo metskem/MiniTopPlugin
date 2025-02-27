@@ -8,7 +8,7 @@ replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250212
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
-	code.cloudfoundry.org/go-loggregator/v10 v10.0.1
+	code.cloudfoundry.org/go-loggregator/v10 v10.1.0
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/integrii/flaggy v1.5.2
