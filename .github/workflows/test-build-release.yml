@@ -1,0 +1,62 @@
+name: Build and Release
+run-name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-job:
+    name: Build MiniTopPlugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Go version
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+      - name: Install versioning tool
+        run: go install github.com/xchapter7x/versioning@latest
+      - name: Determine Version
+        id: determine_version
+        run: |
+          echo VERSION=$(~/go/bin/versioning bump_patch) >> ${GITHUB_ENV}
+      - name: Build MiniTopPlugin
+        env:
+          COMMIT: ${{ github.sha }}
+          VERSION: ${{ env.VERSION }}
+        run: .github/scripts/build.sh
+      - name: upload MiniTopPlugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  release_job:
+    name: Release MiniTopPlugin
+    runs-on: ubuntu-latest
+    needs: build-job
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install versioning tool
+        run: go install github.com/xchapter7x/versioning@latest
+      - name: Determine Version
+        id: determine_version
+        run: |
+          echo VERSION=$(~/go/bin/versioning bump_patch) >> ${GITHUB_ENV}
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Create Release using gh
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body: "Release ${{ env.VERSION }}"
+          files: dist/*
+          tag_name: ${{ env.VERSION }}
