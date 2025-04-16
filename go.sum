@@ -331,8 +331,6 @@ code.cloudfoundry.org/bytefmt v0.37.0 h1:GR5rZgr/6QLV/U2/xgORHUY4lu4EEBgN4/cz7SD
 code.cloudfoundry.org/bytefmt v0.37.0/go.mod h1:u3/LRyPLBYFtn8h9CnzTeupRMD+76qCovDU0vND81lU=
 code.cloudfoundry.org/cli v7.1.0+incompatible h1:1Zn3I+epQBaBvnZAaTudCQQ0WdqcWtjtjEV9MBZP08Y=
 code.cloudfoundry.org/cli v7.1.0+incompatible/go.mod h1:e4d+EpbwevNhyTZKybrLlyTvpH+W22vMsmdmcTxs/Fo=
-code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250327154438-89429f248356 h1:Tsibqe/wTXESQMAMv7pBiDQmbNnMbPC1kO+bsvShyvE=
-code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250327154438-89429f248356/go.mod h1:JD0mvLGJ8MrlpAR/vFvWeZr97UPViyPFpk/S1c6tLyA=
 code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250414213145-88c4afe9cd65 h1:XXjqgpcc0/4nKgyupHBZYsacNcLW2YokyQ3EoofU1ew=
 code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250414213145-88c4afe9cd65/go.mod h1:JD0mvLGJ8MrlpAR/vFvWeZr97UPViyPFpk/S1c6tLyA=
 code.cloudfoundry.org/go-diodes v0.0.0-20250407090537-96fce8693346 h1:pWQhZOnO015i9r1oiBrhqNK8RRUe4MUun3mzMQ9T2hk=
@@ -884,8 +882,6 @@ github.com/tidwall/gjson v1.14.2/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vl
 github.com/tidwall/match v1.1.1/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
 github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
 github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
-github.com/unrolled/secure v1.14.0 h1:u9vJTU/pR4Bny0ntLUMxdfLtmIRGvQf2sEFuA0TG9AE=
-github.com/unrolled/secure v1.14.0/go.mod h1:BmF5hyM6tXczk3MpQkFf1hpKSRqCyhqcbiQtiAF7+40=
 github.com/vito/go-interact v1.0.0 h1:niLW3NjGoMWOayoR6iQ8AxWVM1Q4rR8VGZ1mt6uK3BM=
 github.com/vito/go-interact v1.0.0/go.mod h1:W1mz+UVUZScRM3eUjQhEQiLDnQ+yLnXkB2rjBfGPrXg=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
@@ -1727,7 +1723,6 @@ google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6/go.
 google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2/go.mod h1:W9ynFDP/shebLB1Hl/ESTOap2jHd6pmLXPNZC7SVDbA=
 google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb/go.mod h1:jbe3Bkdp+Dh2IrslsFCklNhweNTBgSYanP1UXhJDhKg=
 google.golang.org/genproto/googleapis/api v0.0.0-20250313205543-e70fdf4c4cb4/go.mod h1:c8q6Z6OCqnfVIqUFJkCzKcrj8eCvUrz+K4KRzSTuANg=
-google.golang.org/genproto/googleapis/api v0.0.0-20250409194420-de1ac958c67a h1:OQ7sHVzkx6L57dQpzUS4ckfWJ51KDH74XHTDe23xWAs=
 google.golang.org/genproto/googleapis/api v0.0.0-20250409194420-de1ac958c67a/go.mod h1:2R6XrVC8Oc08GlNh8ujEpc7HkLiEZ16QeY7FxIs20ac=
 google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e h1:UdXH7Kzbj+Vzastr5nVfccbmFsmYNygVLSPk1pEfDoY=
 google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e/go.mod h1:085qFyf2+XaZlRdCgKNCIZ3afY2p4HHZdoIRpId8F4A=
@@ -1840,7 +1835,6 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20250227231956-55c901821b1e/go.
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb/go.mod h1:LuRYeWDFV6WOn90g357N17oMCaxpgCnbi/44qJvDn2I=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250313205543-e70fdf4c4cb4/go.mod h1:LuRYeWDFV6WOn90g357N17oMCaxpgCnbi/44qJvDn2I=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250404141209-ee84b53bf3d0/go.mod h1:qQ0YXyHHx3XkvlzUtpXDkS29lDSafHMZBAZDc03LQ3A=
-google.golang.org/genproto/googleapis/rpc v0.0.0-20250409194420-de1ac958c67a h1:GIqLhp/cYUkuGuiT+vJk8vhOP86L4+SP5j8yXgeVpvI=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250409194420-de1ac958c67a/go.mod h1:qQ0YXyHHx3XkvlzUtpXDkS29lDSafHMZBAZDc03LQ3A=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e h1:ztQaXfzEXTmCBvbtWYRhJxW+0iJcz2qXfd38/e9l7bA=
 google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e/go.mod h1:qQ0YXyHHx3XkvlzUtpXDkS29lDSafHMZBAZDc03LQ3A=
