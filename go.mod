@@ -2,7 +2,10 @@ module github.com/metskem/MiniTopPlugin
 
 go 1.24
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250414145226-207652e42e2e
+replace (
+	github.com/vito/go-interact => github.com/vito/go-interact v1.0.0
+	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250505200425-f936aa4a68b2
+)
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
@@ -14,15 +17,15 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.37.0 // indirect
-	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250414213145-88c4afe9cd65 // indirect
-	code.cloudfoundry.org/go-diodes v0.0.0-20250407090537-96fce8693346 // indirect
+	code.cloudfoundry.org/bytefmt v0.40.0 // indirect
+	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250417022244-c64c39a6d1a6 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20250505082646-e4c2d772c2ec // indirect
 	code.cloudfoundry.org/go-log-cache v1.0.0 // indirect
 	code.cloudfoundry.org/go-loggregator v7.4.0+incompatible // indirect
 	code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f // indirect
 	code.cloudfoundry.org/jsonry v1.1.4 // indirect
 	code.cloudfoundry.org/rfc5424 v0.0.0-20201103192249-000122071b78 // indirect
-	code.cloudfoundry.org/tlsconfig v0.24.0 // indirect
+	code.cloudfoundry.org/tlsconfig v0.27.0 // indirect
 	code.cloudfoundry.org/ykk v0.0.0-20170424192843-e4df4ce2fd4d // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -30,7 +33,7 @@ require (
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f // indirect
 	github.com/charlievieth/fs v0.0.3 // indirect
 	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
-	github.com/cloudfoundry/bosh-utils v0.0.538 // indirect
+	github.com/cloudfoundry/bosh-utils v0.0.543 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
@@ -59,14 +62,14 @@ require (
 	github.com/vito/go-interact v1.0.0 // indirect
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.35.0 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/term v0.31.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250414145226-207652e42e2e // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
-	google.golang.org/grpc v1.71.1 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250505200425-f936aa4a68b2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250505200425-f936aa4a68b2 // indirect
+	google.golang.org/grpc v1.72.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
