@@ -13,7 +13,7 @@ require (
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/integrii/flaggy v1.5.2
-	github.com/prometheus/common v0.64.0
+	github.com/prometheus/common v0.65.0
 )
 
 require (
