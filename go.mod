@@ -1,6 +1,8 @@
 module github.com/metskem/MiniTopPlugin
 
-go 1.24
+go 1.24.3
+
+toolchain go1.24.5
 
 replace (
 	github.com/vito/go-interact => github.com/vito/go-interact v1.0.0
@@ -11,21 +13,21 @@ require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
 	code.cloudfoundry.org/go-loggregator/v10 v10.2.0
 	github.com/awesome-gocui/gocui v1.1.0
-	github.com/golang-jwt/jwt/v5 v5.2.3
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/integrii/flaggy v1.5.2
 	github.com/prometheus/common v0.65.0
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.44.0 // indirect
-	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250417022244-c64c39a6d1a6 // indirect
-	code.cloudfoundry.org/go-diodes v0.0.0-20250505082646-e4c2d772c2ec // indirect
+	code.cloudfoundry.org/bytefmt v0.45.0 // indirect
+	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250723020518-35108eaa6152 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20250728062316-2a591619c2ae // indirect
 	code.cloudfoundry.org/go-log-cache v1.0.0 // indirect
 	code.cloudfoundry.org/go-loggregator v7.4.0+incompatible // indirect
 	code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f // indirect
 	code.cloudfoundry.org/jsonry v1.1.4 // indirect
 	code.cloudfoundry.org/rfc5424 v0.0.0-20201103192249-000122071b78 // indirect
-	code.cloudfoundry.org/tlsconfig v0.31.0 // indirect
+	code.cloudfoundry.org/tlsconfig v0.32.0 // indirect
 	code.cloudfoundry.org/ykk v0.0.0-20170424192843-e4df4ce2fd4d // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -33,7 +35,7 @@ require (
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f // indirect
 	github.com/charlievieth/fs v0.0.3 // indirect
 	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
-	github.com/cloudfoundry/bosh-utils v0.0.550 // indirect
+	github.com/cloudfoundry/bosh-utils v0.0.552 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
@@ -67,9 +69,9 @@ require (
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/term v0.33.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
-	google.golang.org/genproto v0.0.0-20250715232539-7130f93afb79 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250715232539-7130f93afb79 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250715232539-7130f93afb79 // indirect
+	google.golang.org/genproto v0.0.0-20250804133106-a7a43d27e69b // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250804133106-a7a43d27e69b // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
 	google.golang.org/grpc v1.74.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
