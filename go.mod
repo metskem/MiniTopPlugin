@@ -1,12 +1,10 @@
 module github.com/metskem/MiniTopPlugin
 
-go 1.24.3
-
-toolchain go1.24.5
+go 1.24.5
 
 replace (
 	github.com/vito/go-interact => github.com/vito/go-interact v1.0.0
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250603155806-513f23925822
+	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250804133106-a7a43d27e69b
 )
 
 require (
@@ -35,7 +33,7 @@ require (
 	github.com/bmizerany/pat v0.0.0-20210406213842-e4b6760bdd6f // indirect
 	github.com/charlievieth/fs v0.0.3 // indirect
 	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
-	github.com/cloudfoundry/bosh-utils v0.0.552 // indirect
+	github.com/cloudfoundry/bosh-utils v0.0.553 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/creack/pty v1.1.24 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
@@ -64,16 +62,16 @@ require (
 	github.com/vito/go-interact v1.0.0 // indirect
 	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.37.0 // indirect
-	golang.org/x/crypto v0.40.0 // indirect
-	golang.org/x/net v0.42.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
-	golang.org/x/term v0.33.0 // indirect
-	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/crypto v0.41.0 // indirect
+	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/term v0.34.0 // indirect
+	golang.org/x/text v0.28.0 // indirect
 	google.golang.org/genproto v0.0.0-20250804133106-a7a43d27e69b // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250804133106-a7a43d27e69b // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
-	google.golang.org/grpc v1.74.0 // indirect
-	google.golang.org/protobuf v1.36.6 // indirect
+	google.golang.org/grpc v1.74.2 // indirect
+	google.golang.org/protobuf v1.36.7 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
