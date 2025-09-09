@@ -8,6 +8,7 @@ import (
 	"github.com/metskem/MiniTopPlugin/conf"
 	"github.com/metskem/MiniTopPlugin/util"
 	"github.com/prometheus/common/expfmt"
+	"github.com/prometheus/common/model"
 	"net/http"
 	"strconv"
 	"sync"
@@ -436,7 +437,7 @@ func scrapeNodeExporter(exporterIP string) {
 		util.WriteToFile(fmt.Sprintf("Error while scraping %s : %s", exporterIP, err))
 	} else {
 		defer func() { _ = resp.Body.Close() }()
-		var parser expfmt.TextParser
+		var parser = expfmt.NewTextParser(model.UTF8Validation)
 		metricFamily, err := parser.TextToMetricFamilies(resp.Body)
 		if err != nil {
 			util.WriteToFile(fmt.Sprintf("Error while parsing response from %s : %s", exporterIP, err))
