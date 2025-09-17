@@ -12,7 +12,7 @@ require (
 	code.cloudfoundry.org/go-loggregator/v10 v10.2.0
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/integrii/flaggy v1.5.2
+	github.com/integrii/flaggy v1.6.0
 	github.com/prometheus/common v0.66.1
 )
 
