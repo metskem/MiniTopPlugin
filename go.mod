@@ -1,6 +1,6 @@
 module github.com/metskem/MiniTopPlugin
 
-go 1.24.5
+go 1.25
 
 replace (
 	github.com/vito/go-interact => github.com/vito/go-interact v1.0.0
@@ -12,7 +12,7 @@ require (
 	code.cloudfoundry.org/go-loggregator/v10 v10.2.0
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/integrii/flaggy v1.5.2
+	github.com/integrii/flaggy v1.7.1
 	github.com/prometheus/common v0.66.1
 )
 
