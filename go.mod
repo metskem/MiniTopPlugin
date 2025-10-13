@@ -4,7 +4,7 @@ go 1.25
 
 replace (
 	github.com/vito/go-interact => github.com/vito/go-interact v1.0.0
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20250929231259-57b25ae835d4
+	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20251007200510-49b9836ed3ff
 )
 
 require (
@@ -12,14 +12,14 @@ require (
 	code.cloudfoundry.org/go-loggregator/v10 v10.2.0
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/integrii/flaggy v1.7.1
-	github.com/prometheus/common v0.66.1
+	github.com/integrii/flaggy v1.8.0
+	github.com/prometheus/common v0.67.1
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.53.0 // indirect
-	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20250930154843-ac82e306a475 // indirect
-	code.cloudfoundry.org/go-diodes v0.0.0-20250909124000-1dfc755f0d96 // indirect
+	code.cloudfoundry.org/bytefmt v0.54.0 // indirect
+	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20251009190434-d2babf059e69 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20251008062456-a5530d3e3f80 // indirect
 	code.cloudfoundry.org/go-log-cache v1.0.0 // indirect
 	code.cloudfoundry.org/go-loggregator v7.4.0+incompatible // indirect
 	code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f // indirect
@@ -65,16 +65,16 @@ require (
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
-	golang.org/x/crypto v0.42.0 // indirect
-	golang.org/x/net v0.44.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/term v0.35.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
-	google.golang.org/genproto v0.0.0-20250929231259-57b25ae835d4 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250929231259-57b25ae835d4 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250929231259-57b25ae835d4 // indirect
-	google.golang.org/grpc v1.75.1 // indirect
-	google.golang.org/protobuf v1.36.9 // indirect
+	golang.org/x/crypto v0.43.0 // indirect
+	golang.org/x/net v0.46.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/term v0.36.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
+	google.golang.org/genproto v0.0.0-20251007200510-49b9836ed3ff // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20251007200510-49b9836ed3ff // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251007200510-49b9836ed3ff // indirect
+	google.golang.org/grpc v1.76.0 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
