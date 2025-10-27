@@ -29,7 +29,7 @@ jobs:
           VERSION: ${{ env.VERSION }}
         run: .github/scripts/build.sh
       - name: upload MiniTopPlugin
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: dist
           path: dist/
