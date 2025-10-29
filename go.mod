@@ -13,13 +13,13 @@ require (
 	github.com/awesome-gocui/gocui v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/integrii/flaggy v1.8.0
-	github.com/prometheus/common v0.67.1
+	github.com/prometheus/common v0.67.2
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.55.0 // indirect
+	code.cloudfoundry.org/bytefmt v0.56.0 // indirect
 	code.cloudfoundry.org/cli-plugin-repo v0.0.0-20251018055133-6c94762969fb // indirect
-	code.cloudfoundry.org/go-diodes v0.0.0-20251020045843-c2c4393d1b2b // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20251027221130-fc49a49e17eb // indirect
 	code.cloudfoundry.org/go-log-cache v1.0.0 // indirect
 	code.cloudfoundry.org/go-loggregator v7.4.0+incompatible // indirect
 	code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f // indirect
