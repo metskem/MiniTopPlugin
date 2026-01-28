@@ -11,7 +11,7 @@ require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
 	code.cloudfoundry.org/go-loggregator/v10 v10.2.0
 	github.com/awesome-gocui/gocui v1.1.0
-	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/integrii/flaggy v1.8.0
 	github.com/prometheus/common v0.67.5
 )
